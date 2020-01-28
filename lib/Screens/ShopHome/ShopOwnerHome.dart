@@ -1,21 +1,30 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hair_cos/Models/User.dart';
 import 'package:hair_cos/Screens/Authentication/main.dart';
 import 'package:hair_cos/Screens/UserProfile/EditProfile.dart';
 import 'package:hair_cos/Screens/ShopAppointments/ShopOwnerAppointments.dart';
 import 'package:hair_cos/Screens/ShopImages/ShopOwnerImages.dart';
 import 'package:hair_cos/Screens/ShopViewShop/ShopOwnerShop.dart';
+import 'package:hair_cos/StateContainers/LoginStateContainer.dart';
 
 class ShopOwnerHome extends StatefulWidget {
+  ShopOwnerHome();
+
   _ShopOwnerHome createState() => _ShopOwnerHome();
 }
 
 class _ShopOwnerHome extends State<ShopOwnerHome> {
   final String profileImage = "asserts/barber_pic_1.jpg";
-  final String name = "Mzimkhulu Ncube";
+  String name;
 
   @override
   Widget build(BuildContext context) {
+    final container = StateContainer.of(context);
+    name = container.database.user.isNameEmpty()
+        ? "No name"
+        : container.database.user.name;
+
     return Scaffold(
       appBar: AppBar(title: Text("Your home")),
       body: ListView(
@@ -38,7 +47,7 @@ class _ShopOwnerHome extends State<ShopOwnerHome> {
           ),
           Center(
               child: Text(
-            name,
+            "$name",
             style: TextStyle(fontSize: 20),
           )),
           Center(

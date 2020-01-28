@@ -4,13 +4,33 @@ import 'package:flutter/material.dart';
 class EditDetails extends StatefulWidget {
   String type = "Type";
   String text = "Text";
+  Function onPress;
 
-  EditDetails({this.type, this.text});
+  EditDetails({this.type, this.text, this.onPress});
 
   _EditDetails createState() => _EditDetails();
 }
 
 class _EditDetails extends State<EditDetails> {
+  TextEditingController controller;
+  String txt;
+  @override
+  void initState() {
+    super.initState();
+    txt = widget.text;
+    controller = TextEditingController(text: txt);
+    controller.addListener((){
+      txt = controller.text;
+    });
+  }
+
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,26 +42,33 @@ class _EditDetails extends State<EditDetails> {
           Padding(
             padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
             child: TextFormField(
-              decoration: InputDecoration(
-                  labelText: '${widget.type}',
-                  hintText: 'Enter your ${widget.type}',
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blue))),
-              initialValue: widget.text,
+              controller: controller,
+                decoration: InputDecoration(
+                    labelText: '${widget.type}',
+                    hintText: 'Enter your ${widget.type}',
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blue))),
             ),
           ),
           Padding(
             padding: EdgeInsets.fromLTRB(10, 0, 10, 20),
             child: RaisedButton(
               onPressed: () {
+                if (widget.onPress != null)
+                  widget.onPress(txt);
+
                 Navigator.of(context).pop();
               },
               color: Colors.blue,
               child: Container(
-                  height: 50,
-                  child: Center(
-                      child:
-                          Text("Save", style: TextStyle(color: Colors.white)))),
+                height: 50,
+                child: Center(
+                  child: Text(
+                    "Save",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
             ),
           )
         ],

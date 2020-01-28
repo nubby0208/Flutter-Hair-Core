@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:hair_cos/Screens/Authentication/main.dart';
 import 'package:hair_cos/Screens/UserProfile/EditProfile.dart';
+import 'package:hair_cos/StateContainers/LoginStateContainer.dart';
 
 class Profile extends StatefulWidget {
   _Profile createState() => _Profile();
@@ -10,27 +11,36 @@ class Profile extends StatefulWidget {
 
 class _Profile extends State<Profile> {
   final String profileImage = "asserts/barber_pic_1.jpg";
-  final String name = "Mzimkhulu Ncube";
+  String name;
   final savedPlaces = ["Double X barbers", "K Scissors"];
 
   @override
   Widget build(BuildContext context) {
+    final container = StateContainer.of(context);
+    name = container.database.user.isNameEmpty()
+        ? "No name"
+        : container.database.user.name;
     return Scaffold(
         appBar: AppBar(
           title: Text("Profile"),
         ),
         body: ListView(children: <Widget>[
           Padding(
-              padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-              child: Center(
-                  child: Container(
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+            child: Center(
+              child: Container(
                 width: 150,
                 height: 150,
                 decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                        image: AssetImage(profileImage), fit: BoxFit.fill)),
-              ))),
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                    image: AssetImage(profileImage),
+                    fit: BoxFit.fill,
+                  ),
+                ),
+              ),
+            ),
+          ),
           Center(
               child: Text(
             name,
@@ -67,12 +77,11 @@ class _Profile extends State<Profile> {
                 decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
-                        image: AssetImage(profileImage),
-                        fit: BoxFit.fill))),
-              title: Text(savedPlaces[0]),
+                        image: AssetImage(profileImage), fit: BoxFit.fill))),
+            title: Text(savedPlaces[0]),
             subtitle: Text("11 Bilby Gardens NG3 2GU"),
             trailing: Icon(Icons.keyboard_arrow_right),
-            onTap: (){},
+            onTap: () {},
           ),
           Divider(
             color: Colors.black,
@@ -85,12 +94,11 @@ class _Profile extends State<Profile> {
                 decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
-                        image: AssetImage(profileImage),
-                        fit: BoxFit.fill))),
+                        image: AssetImage(profileImage), fit: BoxFit.fill))),
             title: Text(savedPlaces[1]),
             subtitle: Text("56 Rosewarn Close BA2 1PB"),
             trailing: Icon(Icons.keyboard_arrow_right),
-            onTap: (){},
+            onTap: () {},
           ),
           Divider(
             color: Colors.black,
@@ -101,8 +109,8 @@ class _Profile extends State<Profile> {
                   onTap: () {
                     Navigator.pushAndRemoveUntil(context,
                         MaterialPageRoute(builder: (context) {
-                          return MyApp();
-                        }), (e) => false);
+                      return MyApp();
+                    }), (e) => false);
                   },
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(10, 10, 0, 10),

@@ -1,16 +1,29 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hair_cos/CustomViews/EditDetails.dart';
+import 'package:hair_cos/Services/Database.dart';
+import 'package:hair_cos/Models/User.dart';
+import 'package:hair_cos/StateContainers/LoginStateContainer.dart';
 
 class EditProfile extends StatefulWidget {
+  final DatabaseServices database;
+
+  EditProfile({this.database});
+
   _EditProfile createState() => _EditProfile();
 }
 
 class _EditProfile extends State<EditProfile> {
   String profileImage = "asserts/barber_pic_1.jpg";
+  String name;
+  String email;
+  String mobile;
+  String address;
 
   @override
   Widget build(BuildContext context) {
+    final container = StateContainer.of(context);
+    setAttributes(container);
     return Scaffold(
       appBar: AppBar(
         title: Text("Edit Profile"),
@@ -25,13 +38,19 @@ class _EditProfile extends State<EditProfile> {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return EditDetails(
                 type: "Name",
-                text: "Mzimkhulu Ncube",
+                text: name,
+                onPress: (name) {
+                  User user = container.database.user;
+                  user.name = name;
+                  container.database.editProfile(user);
+                  container.updateUser(user);
+                },
               );
             }));
           },
           leading: Icon(Icons.person),
           title: Text("Name"),
-          subtitle: Text("Mzimkhulu Ncube"),
+          subtitle: Text(name),
           trailing: Icon(Icons.keyboard_arrow_right),
         ),
         Divider(
@@ -43,13 +62,19 @@ class _EditProfile extends State<EditProfile> {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return EditDetails(
                 type: "Email",
-                text: "Mzincube161@gmail.com",
+                text: email,
+                onPress: (name) {
+                  User user = container.database.user;
+                  user.email = name;
+                  container.database.editProfile(user);
+                  container.updateUser(user);
+                },
               );
             }));
           },
           leading: Icon(Icons.email),
           title: Text("Email"),
-          subtitle: Text("Mzincube161@gmail.com"),
+          subtitle: Text(email),
           trailing: Icon(Icons.keyboard_arrow_right),
         ),
         Divider(
@@ -61,13 +86,19 @@ class _EditProfile extends State<EditProfile> {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return EditDetails(
                 type: "Mobile",
-                text: "07776218897",
+                text: mobile,
+                onPress: (name) {
+                  User user = container.database.user;
+                  user.mobile = name;
+                  container.database.editProfile(user);
+                  container.updateUser(user);
+                },
               );
             }));
           },
           leading: Icon(Icons.phone),
           title: Text("Mobile"),
-          subtitle: Text("07776218897"),
+          subtitle: Text(mobile),
           trailing: Icon(Icons.keyboard_arrow_right),
         ),
         Divider(
@@ -76,16 +107,27 @@ class _EditProfile extends State<EditProfile> {
         ),
         ListTile(
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return EditDetails(
-                type: "Address",
-                text: "11 Bilby Gardens NG3 2GU",
-              );
-            }));
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return EditDetails(
+                    type: "Address",
+                    text: address,
+                    onPress: (name) {
+                      User user = container.database.user;
+                      user.address = name;
+                      container.database.editProfile(user);
+                      container.updateUser(user);
+                    },
+                  );
+                },
+              ),
+            );
           },
           leading: Icon(Icons.location_on),
           title: Text("Address"),
-          subtitle: Text("11 Bilby Gardens NG3 2GU"),
+          subtitle: Text(address),
           trailing: Icon(Icons.keyboard_arrow_right),
         )
       ]),
@@ -122,5 +164,20 @@ class _EditProfile extends State<EditProfile> {
         ],
       ),
     );
+  }
+
+  void setAttributes(container) {
+    name = StateContainer.of(context).database.user.isNameEmpty()
+        ? "No name"
+        : StateContainer.of(context).database.user.name;
+    email = StateContainer.of(context).database.user.isEmailEmpty()
+        ? "No email"
+        : StateContainer.of(context).database.user.email;
+    mobile = StateContainer.of(context).database.user.isMobileEmpty()
+        ? "No mobile"
+        : StateContainer.of(context).database.user.mobile;
+    address = StateContainer.of(context).database.user.isAddressEmpty()
+        ? "No address"
+        : StateContainer.of(context).database.user.address;
   }
 }
