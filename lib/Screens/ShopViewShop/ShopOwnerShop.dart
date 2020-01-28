@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hair_cos/Profile/EditDetails.dart';
-import 'package:hair_cos/ShopOwnerClasses/ShopDetails/ShopBookingTypes.dart';
-import 'package:hair_cos/ShopOwnerClasses/ShopDetails/ShopWorkingHours.dart';
+import 'package:hair_cos/CustomViews/EditDetails.dart';
+import 'package:hair_cos/Screens/ShopViewShop/ShopBookingTypes.dart';
+import 'package:hair_cos/Screens/ShopViewShop/ShopWorkingHours.dart';
 
 import 'ShopMembers.dart';
 

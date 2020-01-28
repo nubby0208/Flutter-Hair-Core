@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hair_cos/CustomViews/ExpandableView.dart';
 import 'package:hair_cos/Models/BookingInfo.dart';
-import 'package:hair_cos/ViewShop/MakeBooking.dart';
+import 'package:hair_cos/Screens/UserViewShop/MakeBooking.dart';
 
 class ViewBookingTypes extends StatefulWidget {
   _ViewBookingTypes createState() => _ViewBookingTypes();

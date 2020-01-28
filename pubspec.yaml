@@ -23,6 +23,8 @@ dependencies:
   flutter_calendar_carousel: ^1.4.10
   table_calendar: ^2.2.2
   cupertino_icons: ^0.1.2
+  firebase_auth: ^0.14.0+5
+  cloud_firestore: ^0.12.9+5
 
 dev_dependencies:
   flutter_test:

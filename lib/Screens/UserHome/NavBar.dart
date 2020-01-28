@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hair_cos/Appointments/Appointments.dart';
-import 'package:hair_cos/Home.dart';
-import 'package:hair_cos/Profile/Profile.dart';
+import 'package:hair_cos/Screens/UserAppointments/Appointments.dart';
+import 'package:hair_cos/Screens/UserHome/Home.dart';
+import 'package:hair_cos/Screens/UserProfile/Profile.dart';
 
 class navBar extends StatefulWidget {
   _navBar createState() => _navBar();

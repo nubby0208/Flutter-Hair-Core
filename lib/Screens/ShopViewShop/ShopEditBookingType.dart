@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hair_cos/Models/BookingType.dart';
-import 'package:hair_cos/Profile/EditDetails.dart';
+import 'package:hair_cos/CustomViews/EditDetails.dart';
 
 class ShopEditBookingType extends StatefulWidget {
   BookingType bookingType;

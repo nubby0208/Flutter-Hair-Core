@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hair_cos/Models/WorkingHours.dart';
+import 'package:hair_cos/Screens/ShopViewShop/WorkingHours.dart';
 
 class ShopWorkingHours extends StatefulWidget {
   @override

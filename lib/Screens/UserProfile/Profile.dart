@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/cupertino.dart' as prefix0;
 import 'package:flutter/material.dart';
-import 'package:hair_cos/Login/main.dart';
-import 'package:hair_cos/Profile/EditProfile.dart';
+import 'package:hair_cos/Screens/Authentication/main.dart';
+import 'package:hair_cos/Screens/UserProfile/EditProfile.dart';
 
 class Profile extends StatefulWidget {
   _Profile createState() => _Profile();

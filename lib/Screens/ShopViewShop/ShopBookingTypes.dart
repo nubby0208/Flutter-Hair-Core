@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hair_cos/CustomViews/ExpandableView.dart';
 import 'package:hair_cos/Models/BookingType.dart';
-import 'package:hair_cos/ShopOwnerClasses/ShopDetails/ShopEditBookingType.dart';
+import 'package:hair_cos/Screens/ShopViewShop/ShopEditBookingType.dart';
 
 class ShopBookingTypes extends StatefulWidget {
   @override

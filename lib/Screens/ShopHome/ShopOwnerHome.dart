@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hair_cos/Login/main.dart';
-import 'package:hair_cos/Profile/EditProfile.dart';
-import 'package:hair_cos/ShopOwnerClasses/ShopOwnerAppointments.dart';
-import 'package:hair_cos/ShopOwnerClasses/ShopOwnerImages.dart';
-import 'package:hair_cos/ShopOwnerClasses/ShopDetails/ShopOwnerShop.dart';
+import 'package:hair_cos/Screens/Authentication/main.dart';
+import 'package:hair_cos/Screens/UserProfile/EditProfile.dart';
+import 'package:hair_cos/Screens/ShopAppointments/ShopOwnerAppointments.dart';
+import 'package:hair_cos/Screens/ShopImages/ShopOwnerImages.dart';
+import 'package:hair_cos/Screens/ShopViewShop/ShopOwnerShop.dart';
 
 class ShopOwnerHome extends StatefulWidget {
   _ShopOwnerHome createState() => _ShopOwnerHome();

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:hair_cos/CustomViews/CommentView.dart';
 import 'package:hair_cos/CustomViews/ExpandableText.dart';
 import 'package:hair_cos/CustomViews/RatingBar.dart';
-import 'package:hair_cos/ViewShop/ViewBookingTypes.dart';
-import 'package:hair_cos/ViewShop/ViewAllComments.dart';
+import 'package:hair_cos/Screens/UserViewShop/ViewBookingTypes.dart';
+import 'package:hair_cos/Screens/UserViewShop/ViewAllComments.dart';
 
 class ViewShop extends StatefulWidget {
   final String name;
