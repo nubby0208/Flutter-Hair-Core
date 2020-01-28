@@ -1,6 +1,6 @@
 # hair_cos
 
-A new Flutter project.
+version 2 of haircos app
 
 ## Getting Started
 
