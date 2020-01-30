@@ -16,12 +16,10 @@ class DatabaseServices {
     try {
       return await usersCollection.document(user.uid).setData(
         {
-          'Profile': {
-            'Name': user.name,
-            'Email': user.email,
-            'Mobile': user.mobile,
-            'Address': user.address,
-          },
+          'Name': user.name,
+          'Email': user.email,
+          'Mobile': user.mobile,
+          'Address': user.address,
         },
       );
     } catch (e) {
@@ -29,7 +27,19 @@ class DatabaseServices {
     }
   }
 
-  Future getProfile(User user) async {
-    try {} catch (e) {}
+  void getProfile({Function onData}) async {
+    usersCollection.document(user.uid).get().then((DocumentSnapshot snapshot){
+      onData(_toUser(snapshot));
+    });
+  }
+
+  User _toUser(DocumentSnapshot snap) {
+    return (User(
+      uid: user.uid,
+      name: snap.data["Name"] ?? "No name",
+      email: snap.data["Email"] ?? "No email",
+      mobile: snap.data["Mobile"] ?? "No Mobile",
+      address: snap.data["Address"] ?? "No Address",
+    ));
   }
 }

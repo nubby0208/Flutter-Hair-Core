@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hair_cos/Models/User.dart';
@@ -7,6 +8,7 @@ import 'package:hair_cos/Screens/ShopAppointments/ShopOwnerAppointments.dart';
 import 'package:hair_cos/Screens/ShopImages/ShopOwnerImages.dart';
 import 'package:hair_cos/Screens/ShopViewShop/ShopOwnerShop.dart';
 import 'package:hair_cos/StateContainers/LoginStateContainer.dart';
+import 'package:provider/provider.dart';
 
 class ShopOwnerHome extends StatefulWidget {
   ShopOwnerHome();

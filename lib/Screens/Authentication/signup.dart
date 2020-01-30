@@ -157,6 +157,9 @@ class SignInButtons extends StatelessWidget {
     return RaisedButton(
       onPressed: () {
         container.updateUser(User(uid: "bagojvkdnyeh73bh84hks"));
+        container.database.getProfile(onData: (user) {
+          container.updateUser(user);
+        });
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(

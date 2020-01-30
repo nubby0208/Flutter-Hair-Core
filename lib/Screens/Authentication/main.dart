@@ -173,6 +173,10 @@ class loginButtons extends StatelessWidget {
                 FlatButton(
                   onPressed: () {
                     container.updateUser(User(uid: "baokdnyeh73bh84hks"));
+                    container.database.getProfile(onData: (user) {
+                      container.updateUser(user);
+                    });
+
                     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
                       builder: (context) {
                         return navBar();
