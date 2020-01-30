@@ -1,12 +1,10 @@
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:hair_cos/Models/User.dart';
 import 'package:hair_cos/Screens/Authentication/signup.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter/services.dart';
 import 'package:hair_cos/Services/Database.dart';
 import 'package:hair_cos/StateContainers/LoginStateContainer.dart';
 import '../UserHome/NavBar.dart';
@@ -14,33 +12,28 @@ import '../UserHome/NavBar.dart';
 void main() {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(
-    StateContainer(
-      child: MyApp(),
-      database: DatabaseServices(User(uid: "hello")),
-    ),
+    MyApp(),
   );
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        resizeToAvoidBottomPadding: false,
-        body: loginView(),
+    return StateContainer(
+      child: MaterialApp(
+        home: Scaffold(
+          resizeToAvoidBottomPadding: false,
+          body: loginView(),
+        ),
+      ),
+      database: DatabaseServices(
+        User(uid: "1bibekb4bdkbids"),
       ),
     );
   }
 }
 
-class loginView extends StatefulWidget {
-  _loginView createState() => _loginView();
-}
-
-class _loginView extends State<loginView> {
-  final formKey = GlobalKey<FormState>();
-  String email, password;
-
+class loginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(

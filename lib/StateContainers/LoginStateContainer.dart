@@ -8,8 +8,8 @@ class StateContainer extends StatefulWidget {
 
   StateContainer({@required this.child, this.database});
 
-  static _StateContainerState of (BuildContext context){
-    return context.dependOnInheritedWidgetOfExactType<InheritedStateContainer>().data ;
+  static _StateContainerState of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<InheritedStateContainer>().data;
   }
 
   @override
@@ -25,7 +25,7 @@ class _StateContainerState extends State<StateContainer> {
     database = widget.database;
   }
 
-  updateUser(User user){
+  updateUser(User user) {
     setState(() {
       database.user = user;
     });
