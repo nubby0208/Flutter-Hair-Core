@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hair_cos/Models/User.dart';
+import 'package:hair_cos/Services/Storage.dart';
 
 class DatabaseServices {
   User user;
@@ -28,18 +31,33 @@ class DatabaseServices {
   }
 
   void getProfile({Function onData}) async {
-    usersCollection.document(user.uid).get().then((DocumentSnapshot snapshot){
+    usersCollection.document(user.uid).get().then((DocumentSnapshot snapshot) {
       onData(_toUser(snapshot));
     });
   }
 
   User _toUser(DocumentSnapshot snap) {
-    return (User(
+    return User(
       uid: user.uid,
       name: snap.data["Name"] ?? "No name",
       email: snap.data["Email"] ?? "No email",
       mobile: snap.data["Mobile"] ?? "No Mobile",
       address: snap.data["Address"] ?? "No Address",
-    ));
+      profileUrl: snap.data["ProfileUrl"],
+    );
+  }
+
+  void uploadProfilePicture(File file) {
+    StorageServices storage = StorageServices();
+    storage.upLoadFile(
+      image: file,
+      onData: (profileUrl) {
+        usersCollection.document(user.uid).setData(
+          {
+            'profileUrl': profileUrl,
+          },
+        );
+      },
+    );
   }
 }
