@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:hair_cos/Models/User.dart';
 import 'package:hair_cos/Screens/Authentication/signup.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hair_cos/Services/Authentication.dart';
 import 'package:hair_cos/Services/Database.dart';
 import 'package:hair_cos/StateContainers/LoginStateContainer.dart';
 import '../UserHome/NavBar.dart';
@@ -78,6 +79,8 @@ class loginView extends StatelessWidget {
 }
 
 class loginContent extends StatelessWidget {
+  final AuthenticationServices _auth = AuthenticationServices();
+
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -139,7 +142,24 @@ class loginContent extends StatelessWidget {
               child: Text("No Account? Sign up"),
             ),
           ),
-        )
+        ),
+        Center(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+            child: InkWell(
+              onTap: () async {
+                dynamic result = await _auth.signInAnon();
+                if (result == null) {
+                  print('error signing in');
+                } else {
+                  print('signed in');
+                  print(result);
+                }
+              },
+              child: Text("Continue as Guest"),
+            ),
+          ),
+        ),
       ],
     );
   }
