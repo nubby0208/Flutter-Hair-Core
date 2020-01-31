@@ -17,7 +17,7 @@ class DatabaseServices {
 
   Future editProfile(User user) async {
     try {
-      return await usersCollection.document(user.uid).setData(
+      return await usersCollection.document(user.uid).updateData(
         {
           'Name': user.name,
           'Email': user.email,
@@ -47,17 +47,22 @@ class DatabaseServices {
     );
   }
 
-  void uploadProfilePicture(File file) {
-    StorageServices storage = StorageServices();
-    storage.upLoadFile(
-      image: file,
-      onData: (profileUrl) {
-        usersCollection.document(user.uid).setData(
-          {
-            'profileUrl': profileUrl,
-          },
-        );
-      },
-    );
+  void uploadProfilePicture(File file, {Function onData}) {
+    try {
+      StorageServices storage = StorageServices();
+      storage.upLoadFile(
+        image: file,
+        onData: (String profileUrl) {
+          onData(profileUrl);
+          usersCollection.document(user.uid).updateData(
+            {
+              'profileUrl': profileUrl,
+            },
+          );
+        },
+      );
+    }catch(e){
+      print(e);
+    }
   }
 }

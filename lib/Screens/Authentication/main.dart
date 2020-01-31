@@ -173,7 +173,7 @@ class loginButtons extends StatelessWidget {
                 FlatButton(
                   onPressed: () {
                     container.updateUser(User(uid: "baokdnyeh73bh84hks"));
-                    container.database.getProfile(onData: (user) {
+                    container.database.getProfile(onData: (User user) {
                       container.updateUser(user);
                     });
 
