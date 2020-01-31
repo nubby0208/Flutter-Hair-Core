@@ -1,10 +1,12 @@
 class User{
   String uid;
+  String profileUrl;
   String name;
   String email;
   String mobile;
   String address;
-  User({this.uid , this.name, this.email, this.mobile, this.address});
+
+  User({this.profileUrl, this.uid , this.name, this.email, this.mobile, this.address});
 
   bool isUidEmpty(){
     return uid == null;
@@ -24,5 +26,9 @@ class User{
 
   bool isAddressEmpty(){
     return address == null;
+  }
+
+  bool isProfileUrlEmpty(){
+    return profileUrl == null;
   }
 }

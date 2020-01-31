@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hair_cos/CustomViews/EditDetails.dart';
 import 'package:hair_cos/Services/Database.dart';
 import 'package:hair_cos/Models/User.dart';
+import 'package:hair_cos/Services/Images.dart';
 import 'package:hair_cos/StateContainers/LoginStateContainer.dart';
 
 class EditProfile extends StatefulWidget {
@@ -14,7 +17,7 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfile extends State<EditProfile> {
-  String profileImage = "asserts/barber_pic_1.jpg";
+  File profileImage;
   String name;
   String email;
   String mobile;
@@ -142,20 +145,25 @@ class _EditProfile extends State<EditProfile> {
             width: 150,
             height: 150,
           ),
-          Container(
-            width: 150,
-            height: 150,
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                    image: AssetImage(profileImage), fit: BoxFit.fill)),
-          ),
+          profileImage == null
+              ? Text("No image selected")
+              : CircleAvatar(
+                  backgroundImage: FileImage(profileImage),
+                  radius: 75,
+                ),
           Positioned(
               bottom: 0,
               right: 0,
               child: IconButton(
                 color: Colors.blue,
-                onPressed: () {},
+                onPressed: () async{
+                  profileImage = await ImageServices.getImageFromCamera();
+                  setState(() {
+                    StateContainer.of(context)
+                        .database
+                        .uploadProfilePicture(profileImage);
+                  });
+                },
                 icon: Icon(
                   Icons.add_a_photo,
                   size: 40,
@@ -181,3 +189,13 @@ class _EditProfile extends State<EditProfile> {
         : StateContainer.of(context).database.user.address;
   }
 }
+
+/**
+ * Container(
+    width: 150,
+    height: 150,
+    decoration: BoxDecoration(
+    shape: BoxShape.circle,
+    image: DecorationImage(
+    image: AssetImage(profileImage), fit: BoxFit.fill)),
+    )*/
