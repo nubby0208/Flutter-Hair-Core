@@ -7,15 +7,17 @@ class StorageServices {
   StorageServices();
 
   // get image
-  void upLoadFile({Function onData, image}) {
+  void upLoadFile({Function onData, image}) async {
     try {
-      StorageUploadTask uploadTask = FirebaseStorage.instance.ref().putFile(image);
-      /*await uploadTask.onComplete;
-      storageReference.getDownloadURL().then((fileUrl) {
-        onData(fileUrl);
-      });*/
+      StorageUploadTask uploadTask =
+          storageReference.child("${DateTime.now()}.jpeg").putFile(image);
+      StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+      taskSnapshot.ref.getDownloadURL().then((dynamic){
+        onData(dynamic);
+      });
     } catch (e) {
-      return;
+      print(e);
+      print("hello");
     }
   }
 

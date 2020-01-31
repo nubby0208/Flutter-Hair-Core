@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hair_cos/CustomViews/EditDetails.dart';
 import 'package:hair_cos/Services/Database.dart';
 import 'package:hair_cos/Models/User.dart';
@@ -17,16 +18,22 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfile extends State<EditProfile> {
-  File profileImage;
+  String profileImage;
   String name;
   String email;
   String mobile;
   String address;
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final container = StateContainer.of(context);
     setAttributes(container);
+    profileImage = StateContainer.of(context).database.user.profileUrl;
     return Scaffold(
       appBar: AppBar(
         title: Text("Edit Profile"),
@@ -148,7 +155,7 @@ class _EditProfile extends State<EditProfile> {
           profileImage == null
               ? Text("No image selected")
               : CircleAvatar(
-                  backgroundImage: FileImage(profileImage),
+                  backgroundImage: NetworkImage(profileImage),
                   radius: 75,
                 ),
           Positioned(
@@ -156,13 +163,17 @@ class _EditProfile extends State<EditProfile> {
               right: 0,
               child: IconButton(
                 color: Colors.blue,
-                onPressed: () async{
-                  profileImage = await ImageServices.getImageFromCamera();
-                  setState(() {
-                    StateContainer.of(context)
-                        .database
-                        .uploadProfilePicture(profileImage);
-                  });
+                onPressed: () async {
+                  File file = await ImageServices.getImageFromGallery();
+                  StateContainer.of(context).database.uploadProfilePicture(
+                    file,
+                    onData: (image) {
+                      User user = StateContainer.of(context).database.user;
+                      user.profileUrl = image;
+                      StateContainer.of(context).updateUser(user);
+                      setState(() {});
+                    },
+                  );
                 },
                 icon: Icon(
                   Icons.add_a_photo,
