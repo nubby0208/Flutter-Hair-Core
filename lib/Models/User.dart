@@ -1,34 +1,43 @@
-class User{
+class User {
   String uid;
   String profileUrl;
   String name;
   String email;
   String mobile;
   String address;
+  bool anonymous = false;
 
-  User({this.profileUrl, this.uid , this.name, this.email, this.mobile, this.address});
+  User({
+    this.profileUrl,
+    this.uid,
+    this.name,
+    this.email,
+    this.mobile,
+    this.address,
+    this.anonymous,
+  });
 
-  bool isUidEmpty(){
+  bool isUidEmpty() {
     return uid == null;
   }
 
-  bool isNameEmpty(){
+  bool isNameEmpty() {
     return name == null;
   }
 
-  bool isEmailEmpty(){
+  bool isEmailEmpty() {
     return email == null;
   }
 
-  bool isMobileEmpty(){
+  bool isMobileEmpty() {
     return mobile == null;
   }
 
-  bool isAddressEmpty(){
+  bool isAddressEmpty() {
     return address == null;
   }
 
-  bool isProfileUrlEmpty(){
+  bool isProfileUrlEmpty() {
     return profileUrl == null;
   }
 }

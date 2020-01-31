@@ -83,6 +83,7 @@ class loginContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final container = StateContainer.of(context);
     return ListView(
       children: <Widget>[
         Padding(
@@ -112,7 +113,27 @@ class loginContent extends StatelessWidget {
         ),
         Padding(
           padding: EdgeInsets.fromLTRB(30, 0, 30, 10),
-          child: loginButtons("LOGIN", Colors.blue, Colors.white),
+          child: loginButtons(
+            "LOGIN",
+            Colors.blue,
+            Colors.white,
+            onPress: () {
+              /*this is where login stuff goes*/
+              container.updateUser(User(uid: "baokdnyeh73bh84hks"));
+              container.database.getProfile(
+                onData: (User user) {
+                  user.anonymous = false;
+                  container.updateUser(user);
+                },
+              );
+              // opens home screen
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+                builder: (context) {
+                  return navBar();
+                },
+              ), (e) => false);
+            },
+          ),
         ),
         Center(
           child: Text(
@@ -122,9 +143,23 @@ class loginContent extends StatelessWidget {
         ),
         Padding(
           padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-          child: loginButtons("Login with google", Colors.red, Colors.white),
+          child: loginButtons(
+            "Login with google",
+            Colors.red,
+            Colors.white,
+            onPress: () {
+              /*this is where google stuff goes*/
+            },
+          ),
         ),
-        loginButtons("Login with facebook", Colors.indigo, Colors.white),
+        loginButtons(
+          "Login with facebook",
+          Colors.indigo,
+          Colors.white,
+          onPress: () {
+            /*this is where facebook stuff goes*/
+          },
+        ),
         Center(
           child: Padding(
             padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
@@ -154,6 +189,20 @@ class loginContent extends StatelessWidget {
                 } else {
                   print('signed in');
                   print(result);
+
+                  // creates user
+                  container.updateUser(
+                    User(
+                      uid: result.uid,
+                      anonymous: true,
+                    ),
+                  );
+                  // opens home screen
+                  Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+                    builder: (context) {
+                      return navBar();
+                    },
+                  ), (e) => false);
                 }
               },
               child: Text("Continue as Guest"),
@@ -169,46 +218,15 @@ class loginButtons extends StatelessWidget {
   final Color background;
   final String txt;
   final Color textColor;
+  final Function onPress;
 
-  loginButtons(this.txt, this.background, this.textColor);
+  loginButtons(this.txt, this.background, this.textColor, {this.onPress});
 
   @override
   Widget build(BuildContext context) {
-    final container = StateContainer.of(context);
     return RaisedButton(
       onPressed: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("Logging in"),
-              content: Text("Press continue if you would like to login"),
-              actions: <Widget>[
-                FlatButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text("Close"),
-                ),
-                FlatButton(
-                  onPressed: () {
-                    container.updateUser(User(uid: "baokdnyeh73bh84hks"));
-                    container.database.getProfile(onData: (user) {
-                      container.updateUser(user);
-                    });
-
-                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-                      builder: (context) {
-                        return navBar();
-                      },
-                    ), (e) => false);
-                  },
-                  child: Text("Continue"),
-                )
-              ],
-            );
-          },
-        );
+        onPress();
       },
       color: background,
       splashColor: Colors.grey,
