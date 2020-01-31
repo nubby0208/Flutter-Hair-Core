@@ -5,11 +5,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:hair_cos/Models/User.dart';
 import 'package:hair_cos/Services/Storage.dart';
 
+import 'Authentication.dart';
+
 class DatabaseServices {
   User user;
+  final AuthenticationServices auth = AuthenticationServices();
 
   void upDateUser(User _user) => user = _user;
-
   final CollectionReference usersCollection =
       Firestore.instance.collection("Users");
 

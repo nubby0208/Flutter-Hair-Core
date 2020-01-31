@@ -79,8 +79,7 @@ class loginView extends StatelessWidget {
 }
 
 class loginContent extends StatelessWidget {
-  final AuthenticationServices _auth = AuthenticationServices();
-
+  // to access auth write container.database.auth
   @override
   Widget build(BuildContext context) {
     final container = StateContainer.of(context);
@@ -183,7 +182,7 @@ class loginContent extends StatelessWidget {
             padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
             child: InkWell(
               onTap: () async {
-                dynamic result = await _auth.signInAnon();
+                dynamic result = await container.database.auth.signInAnon();
                 if (result == null) {
                   print('error signing in');
                 } else {

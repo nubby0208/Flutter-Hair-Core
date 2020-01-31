@@ -21,25 +21,26 @@ class _Profile extends State<Profile> {
         ? "No name"
         : container.database.user.name;
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Profile"),
-        ),
-        body: container.database.user.anonymous
-            ? Center(
-                child: InkWell(
-                  onTap: () {
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) {
-                        return MyApp();
-                      }),
-                      (e) => false,
-                    );
-                  },
-                  child: Text("Sign in to View profile"),
-                ),
-              )
-            : ListView(children: <Widget>[
+      appBar: AppBar(
+        title: Text("Profile"),
+      ),
+      body: container.database.user.anonymous
+          ? Center(
+              child: InkWell(
+                onTap: () {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) {
+                      return MyApp();
+                    }),
+                    (e) => false,
+                  );
+                },
+                child: Text("Sign in to View profile"),
+              ),
+            )
+          : ListView(
+              children: <Widget>[
                 Padding(
                   padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
                   child: Center(
@@ -121,21 +122,26 @@ class _Profile extends State<Profile> {
                   color: Colors.black,
                 ),
                 Padding(
-                    padding: EdgeInsets.all(5),
-                    child: InkWell(
-                        onTap: () {
-                          Navigator.pushAndRemoveUntil(context,
-                              MaterialPageRoute(builder: (context) {
-                            return MyApp();
-                          }), (e) => false);
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
-                          child: Text(
-                            "Logout",
-                            style: TextStyle(fontSize: 25, color: Colors.blue),
-                          ),
-                        )))
-              ]));
+                  padding: EdgeInsets.all(5),
+                  child: InkWell(
+                    onTap: () {
+                      container.database.auth.signOut();
+                      Navigator.pushAndRemoveUntil(context,
+                          MaterialPageRoute(builder: (context) {
+                        return MyApp();
+                      }), (e) => false);
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
+                      child: Text(
+                        "Logout",
+                        style: TextStyle(fontSize: 25, color: Colors.blue),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+    );
   }
 }
