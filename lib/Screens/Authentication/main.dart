@@ -10,7 +10,6 @@ import 'package:hair_cos/Services/Authentication.dart';
 import 'package:hair_cos/Services/Database.dart';
 import 'package:hair_cos/StateContainers/LoginStateContainer.dart';
 
-
 void main() {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(
@@ -122,7 +121,6 @@ class loginContent extends StatelessWidget {
               container.updateUser(User(uid: "baokdnyeh73bh84hks"));
               container.database.getProfile(
                 onData: (User user) {
-                  user.anonymous = false;
                   container.updateUser(user);
                 },
               );
@@ -148,15 +146,18 @@ class loginContent extends StatelessWidget {
             Colors.red,
             Colors.white,
             onPress: () {
-             AuthenticationServices().testSignInWithGoogle().whenComplete(() {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return navBar();
-                    },
-                  ),
-                );
-              });
+
+              AuthenticationServices().testSignInWithGoogle().whenComplete(
+                () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return navBar();
+                      },
+                    ),
+                  );
+                },
+              );
             },
           ),
         ),
