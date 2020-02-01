@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hair_cos/Models/user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthenticationServices {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-//  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+  final GoogleSignIn googleSignIn = GoogleSignIn();
 
   // create user obj based on firebase user
   User _userFromFirebaseUser(FirebaseUser user) {
@@ -62,7 +64,29 @@ class AuthenticationServices {
       return null;
     }
   }
-  // sign in anonymously
+  //log in with googlr account
+
+  final GoogleSignIn _googleSignIn = new GoogleSignIn();
+  Future<String> testSignInWithGoogle() async {
+    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+    final GoogleSignInAuthentication googleAuth =
+    await googleUser.authentication;
+    final AuthCredential credential = GoogleAuthProvider.getCredential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+    final FirebaseUser user = (await _auth.signInWithCredential(credential)).user;
+
+    assert(user.email != null);
+    assert(user.displayName != null);
+    assert(!user.isAnonymous);
+    assert(await user.getIdToken() != null);
+
+    final FirebaseUser currentUser = await _auth.currentUser();
+    assert(user.uid == currentUser.uid);
+
+    return 'signInWithGoogle succeeded: $user';
+  }
 
   // sign in with email
 

@@ -24,7 +24,7 @@ class _Profile extends State<Profile> {
       appBar: AppBar(
         title: Text("Profile"),
       ),
-      body: container.database.user.anonymous
+      body: container.database.user.anonymous != null
           ? Center(
               child: InkWell(
                 onTap: () {
