@@ -21,9 +21,10 @@ class StorageServices {
     }
   }
 
-  void deleteFile(String filePath) {
+  // deletes file using url
+  void deleteFile(String url) {
     try {
-      FirebaseStorage.instance.getReferenceFromUrl(filePath).then(
+      FirebaseStorage.instance.getReferenceFromUrl(url).then(
         (StorageReference value) {
           value.delete();
           print("Deleted");
