@@ -12,6 +12,7 @@ class DatabaseServices {
   final AuthenticationServices auth = AuthenticationServices();
 
   void upDateUser(User _user) => user = _user;
+  
   final CollectionReference usersCollection =
       Firestore.instance.collection("Users");
 

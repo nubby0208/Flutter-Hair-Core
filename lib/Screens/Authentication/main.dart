@@ -5,10 +5,11 @@ import 'package:flutter/services.dart';
 import 'package:hair_cos/Models/User.dart';
 import 'package:hair_cos/Screens/Authentication/signup.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hair_cos/Screens/UserHome/NavBar.dart';
 import 'package:hair_cos/Services/Authentication.dart';
 import 'package:hair_cos/Services/Database.dart';
 import 'package:hair_cos/StateContainers/LoginStateContainer.dart';
-import '../UserHome/NavBar.dart';
+
 
 void main() {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -147,7 +148,15 @@ class loginContent extends StatelessWidget {
             Colors.red,
             Colors.white,
             onPress: () {
-              /*this is where google stuff goes*/
+             AuthenticationServices().testSignInWithGoogle().whenComplete(() {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return navBar();
+                    },
+                  ),
+                );
+              });
             },
           ),
         ),
@@ -187,7 +196,7 @@ class loginContent extends StatelessWidget {
                   print('error signing in');
                 } else {
                   print('signed in');
-                  print(result);
+                  print(result.uid);
 
                   // creates user
                   container.updateUser(
