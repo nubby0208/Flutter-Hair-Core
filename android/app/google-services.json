@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "573583486063-99gmmsbtc2g97qi32e884e34fmina28t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mzimkhulu.hair_cos",
+            "certificate_hash": "35ec6d0c90e61a04b0383ce70cf16866ebde9646"
+          }
+        },
+        {
           "client_id": "573583486063-hkhtqeegj0sthguql1aecmmr30cdk528.apps.googleusercontent.com",
           "client_type": 3
         }

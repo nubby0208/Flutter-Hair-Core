@@ -15,8 +15,7 @@ class AuthenticationServices {
 
   // auth change user stream
   Stream<User> get user {
-    return _auth.onAuthStateChanged
-        .map(_userFromFirebaseUser);
+    return _auth.onAuthStateChanged.map(_userFromFirebaseUser);
   }
 
   // sign in anon
@@ -34,7 +33,8 @@ class AuthenticationServices {
   // sign in with email and password
   Future signInWithEmailAndPassword(String email, String password) async {
     try {
-      AuthResult result = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      AuthResult result = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
       FirebaseUser user = result.user;
       return user;
     } catch (error) {
@@ -46,7 +46,8 @@ class AuthenticationServices {
   // register with email and password
   Future registerWithEmailAndPassword(String email, String password) async {
     try {
-      AuthResult result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+      AuthResult result = await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
       FirebaseUser user = result.user;
       return _userFromFirebaseUser(user);
     } catch (error) {
@@ -64,18 +65,21 @@ class AuthenticationServices {
       return null;
     }
   }
+
   //log in with googlr account
 
   final GoogleSignIn _googleSignIn = new GoogleSignIn();
-  Future<String> testSignInWithGoogle() async {
+
+  Future testSignInWithGoogle() async {
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
     final GoogleSignInAuthentication googleAuth =
-    await googleUser.authentication;
+        await googleUser.authentication;
     final AuthCredential credential = GoogleAuthProvider.getCredential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
-    final FirebaseUser user = (await _auth.signInWithCredential(credential)).user;
+    final FirebaseUser user =
+        (await _auth.signInWithCredential(credential)).user;
 
     assert(user.email != null);
     assert(user.displayName != null);
@@ -84,25 +88,30 @@ class AuthenticationServices {
 
     final FirebaseUser currentUser = await _auth.currentUser();
     assert(user.uid == currentUser.uid);
-
-    return 'signInWithGoogle succeeded: $user';
+    print('signInWithGoogle succeeded: $user');
+    return user;
   }
+//sign out google
+  void signOutGoogle() async{
+    await googleSignIn.signOut();
 
-  // sign in with email
+    print("User Sign Out");
+  }
+// sign in with email
 
-  // register with email
+// register with email
 
-  // change password
+// change password
 
-  // shop sign in
+// shop sign in
 
-  // shop register
+// shop register
 
-  // sign in with google
+// sign in with google
 
-  // sign in with facebook
+// sign in with facebook
 
-  // register with google
+// register with google
 
-  // register with facebook
+// register with facebook
 }
