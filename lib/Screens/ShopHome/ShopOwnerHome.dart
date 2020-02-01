@@ -17,7 +17,7 @@ class ShopOwnerHome extends StatefulWidget {
 }
 
 class _ShopOwnerHome extends State<ShopOwnerHome> {
-  final String profileImage = "asserts/barber_pic_1.jpg";
+  String profileImage = "asserts/barber_pic_1.jpg";
   String name;
 
   @override
@@ -26,7 +26,7 @@ class _ShopOwnerHome extends State<ShopOwnerHome> {
     name = container.database.user.isNameEmpty()
         ? "No name"
         : container.database.user.name;
-
+    profileImage = container.database.user.profileUrl;
     return Scaffold(
       appBar: AppBar(title: Text("Your home")),
       body: ListView(
@@ -34,16 +34,11 @@ class _ShopOwnerHome extends State<ShopOwnerHome> {
           Padding(
             padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
             child: Center(
-              child: Container(
-                width: 150,
-                height: 150,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                    image: AssetImage(profileImage),
-                    fit: BoxFit.fill,
-                  ),
-                ),
+              child: CircleAvatar(
+                backgroundImage: profileImage == null
+                    ? AssetImage("asserts/no_profile.jpg")
+                    : NetworkImage(profileImage),
+                radius: 75,
               ),
             ),
           ),

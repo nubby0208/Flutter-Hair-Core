@@ -55,6 +55,7 @@ flutter:
     - asserts/barber_pic_1.jpg
     - asserts/barber_pic_2.jpg
     - asserts/barber_pic_3.jpg
+    - asserts/no_profile.jpg
     # - images/a_dot_burr.jpeg
     # - images/a_dot_ham.jpeg
 

@@ -10,9 +10,9 @@ class Profile extends StatefulWidget {
 }
 
 class _Profile extends State<Profile> {
-  final String profileImage = "asserts/barber_pic_1.jpg";
+  String profileImage;
   String name;
-  final savedPlaces = ["Double X barbers", "K Scissors"];
+  var savedPlaces = ["Double X barbers", "K Scissors"];
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +20,8 @@ class _Profile extends State<Profile> {
     name = container.database.user.isNameEmpty()
         ? "No name"
         : container.database.user.name;
+
+    profileImage = container.database.user.profileUrl;
     return Scaffold(
       appBar: AppBar(
         title: Text("Profile"),
@@ -44,16 +46,11 @@ class _Profile extends State<Profile> {
                 Padding(
                   padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
                   child: Center(
-                    child: Container(
-                      width: 150,
-                      height: 150,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: AssetImage(profileImage),
-                          fit: BoxFit.fill,
-                        ),
-                      ),
+                    child: CircleAvatar(
+                      backgroundImage: profileImage == null
+                          ? AssetImage("asserts/no_profile.jpg")
+                          : NetworkImage(profileImage),
+                      radius: 75,
                     ),
                   ),
                 ),
@@ -93,7 +90,7 @@ class _Profile extends State<Profile> {
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           image: DecorationImage(
-                              image: AssetImage(profileImage),
+                              image: AssetImage("asserts/barber_pic_1.jpg"),
                               fit: BoxFit.fill))),
                   title: Text(savedPlaces[0]),
                   subtitle: Text("11 Bilby Gardens NG3 2GU"),
@@ -111,7 +108,7 @@ class _Profile extends State<Profile> {
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           image: DecorationImage(
-                              image: AssetImage(profileImage),
+                              image: AssetImage("asserts/barber_pic_1.jpg"),
                               fit: BoxFit.fill))),
                   title: Text(savedPlaces[1]),
                   subtitle: Text("56 Rosewarn Close BA2 1PB"),

@@ -12,7 +12,7 @@ class StorageServices {
       StorageUploadTask uploadTask =
           storageReference.child("${DateTime.now()}.jpeg").putFile(image);
       StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
-      taskSnapshot.ref.getDownloadURL().then((dynamic){
+      taskSnapshot.ref.getDownloadURL().then((dynamic) {
         onData(dynamic);
       });
     } catch (e) {
@@ -21,5 +21,16 @@ class StorageServices {
     }
   }
 
-// store images
+  void deleteFile(String filePath) {
+    try {
+      FirebaseStorage.instance.getReferenceFromUrl(filePath).then(
+        (StorageReference value) {
+          value.delete();
+          print("Deleted");
+        },
+      );
+    } catch (e) {
+      print("Error");
+    }
+  }
 }

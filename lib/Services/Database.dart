@@ -55,10 +55,11 @@ class DatabaseServices {
       storage.upLoadFile(
         image: file,
         onData: (String profileUrl) {
+          storage.deleteFile(user.profileUrl);
           onData(profileUrl);
           usersCollection.document(user.uid).updateData(
             {
-              'profileUrl': profileUrl,
+              'ProfileUrl': profileUrl,
             },
           );
         },

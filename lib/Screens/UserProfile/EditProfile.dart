@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -31,9 +30,10 @@ class _EditProfile extends State<EditProfile> {
 
   @override
   Widget build(BuildContext context) {
-    final container = StateContainer.of(context);
+    var container = StateContainer.of(context);
     setAttributes(container);
-    profileImage = StateContainer.of(context).database.user.profileUrl;
+    profileImage = container.database.user.profileUrl;
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Edit Profile"),
@@ -45,18 +45,23 @@ class _EditProfile extends State<EditProfile> {
         ),
         ListTile(
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return EditDetails(
-                type: "Name",
-                text: name,
-                onPress: (name) {
-                  User user = container.database.user;
-                  user.name = name;
-                  container.database.editProfile(user);
-                  container.updateUser(user);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return EditDetails(
+                    type: "Name",
+                    text: name,
+                    onPress: (name) {
+                      User user = container.database.user;
+                      user.name = name;
+                      container.database.editProfile(user);
+                      container.updateUser(user);
+                    },
+                  );
                 },
-              );
-            }));
+              ),
+            );
           },
           leading: Icon(Icons.person),
           title: Text("Name"),
@@ -152,19 +157,19 @@ class _EditProfile extends State<EditProfile> {
             width: 150,
             height: 150,
           ),
-          profileImage == null
-              ? Text("No image selected")
-              : CircleAvatar(
-                  backgroundImage: NetworkImage(profileImage),
-                  radius: 75,
-                ),
+          CircleAvatar(
+            backgroundImage: profileImage == null
+                ? AssetImage("asserts/no_profile.jpg")
+                : NetworkImage(profileImage),
+            radius: 75,
+          ),
           Positioned(
               bottom: 0,
               right: 0,
               child: IconButton(
                 color: Colors.blue,
                 onPressed: () async {
-                  File file = await ImageServices.getImageFromGallery();
+                  File file = await ImageServices.getImageFromCamera();
                   StateContainer.of(context).database.uploadProfilePicture(
                     file,
                     onData: (image) {
