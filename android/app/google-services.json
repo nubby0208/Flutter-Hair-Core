@@ -8,6 +8,43 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:573583486063:android:0ee8d901d55ca417be319a",
+        "android_client_info": {
+          "package_name": "com.HairCos.hair_cos"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "573583486063-jdj1t9gan7a13qrsrccrf5bkb1uqmnhg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.HairCos.hair_cos",
+            "certificate_hash": "cb2c253f80ae63c87ef65f2486c32539a9cc3c3b"
+          }
+        },
+        {
+          "client_id": "573583486063-hkhtqeegj0sthguql1aecmmr30cdk528.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHeMbINqFVT4t64cpI2888hd4V90GuYqg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "573583486063-hkhtqeegj0sthguql1aecmmr30cdk528.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:573583486063:android:d5bbe122f9f2eea2be319a",
         "android_client_info": {
           "package_name": "com.mzimkhulu.hair_cos"

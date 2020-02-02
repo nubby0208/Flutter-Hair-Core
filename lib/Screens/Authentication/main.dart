@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -9,7 +10,6 @@ import 'package:hair_cos/Screens/UserHome/NavBar.dart';
 import 'package:hair_cos/Services/Authentication.dart';
 import 'package:hair_cos/Services/Database.dart';
 import 'package:hair_cos/StateContainers/LoginStateContainer.dart';
-
 
 void main() {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -148,26 +148,37 @@ class loginContent extends StatelessWidget {
             Colors.red,
             Colors.white,
             onPress: () async {
-             dynamic result = await AuthenticationServices().testSignInWithGoogle();
-             if (result == null){
-               errorDialog("Error signing in", context);
-             }else{
-               container.updateUser(
-                 User(
-                   uid: result.uid,
-                   email: result.email,
-                   name: result.displayName,
-                   profileUrl: result.photoUrl,
-                 ),
-               );
-               Navigator.of(context).push(
-                 MaterialPageRoute(
-                   builder: (context) {
-                     return navBar();
-                   },
-                 ),
-               );
-             }
+              dynamic result =
+                  await AuthenticationServices().testSignInWithGoogle();
+              if (result == null) {
+                errorDialog("Error signing in", context);
+              } else {
+                FirebaseUser user = result.user;
+                container.updateUser(User(uid: user.uid));
+                if (result.additionalUserInfo.isNewUser) {
+                  User tempUser = User(
+                    uid: user.uid,
+                    email: user.email,
+                    name: user.displayName,
+                    profileUrl: user.photoUrl,
+                  );
+                  container.database.editProfile(tempUser);
+                  container.updateUser(tempUser);
+                } else {
+                  container.database.getProfile(
+                    onData: (User user) {
+                      container.updateUser(user);
+                    },
+                  );
+                }
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return navBar();
+                    },
+                  ),
+                );
+              }
             },
           ),
         ),
@@ -233,20 +244,22 @@ class loginContent extends StatelessWidget {
   }
 
   void errorDialog(String message, BuildContext context) {
-    showDialog(context: context, builder: (ctx) {
-      return AlertDialog(
-        title: Text("Error"),
-        content: Text(message),
-        actions: <Widget>[
-          FlatButton(
-            child: Text("Close"),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          )
-        ],
-      );
-    });
+    showDialog(
+        context: context,
+        builder: (ctx) {
+          return AlertDialog(
+            title: Text("Error"),
+            content: Text(message),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("Close"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
   }
 }
 

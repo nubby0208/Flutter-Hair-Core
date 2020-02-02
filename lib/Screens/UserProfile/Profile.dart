@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:hair_cos/Screens/Authentication/main.dart';
 import 'package:hair_cos/Screens/UserProfile/EditProfile.dart';
+import 'package:hair_cos/Services/Images.dart';
 import 'package:hair_cos/StateContainers/LoginStateContainer.dart';
 
 class Profile extends StatefulWidget {
@@ -47,9 +48,7 @@ class _Profile extends State<Profile> {
                   padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
                   child: Center(
                     child: CircleAvatar(
-                      backgroundImage: profileImage == null
-                          ? AssetImage("asserts/no_profile.jpg")
-                          : NetworkImage(profileImage),
+                      backgroundImage: ImageServices.getNetworkImage(profileImage),
                       radius: 75,
                     ),
                   ),

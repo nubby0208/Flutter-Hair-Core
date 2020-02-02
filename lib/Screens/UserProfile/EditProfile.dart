@@ -158,9 +158,7 @@ class _EditProfile extends State<EditProfile> {
             height: 150,
           ),
           CircleAvatar(
-            backgroundImage: profileImage == null
-                ? AssetImage("asserts/no_profile.jpg")
-                : NetworkImage(profileImage),
+            backgroundImage: ImageServices.getNetworkImage(profileImage),
             radius: 75,
           ),
           Positioned(

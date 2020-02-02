@@ -7,6 +7,7 @@ import 'package:hair_cos/Screens/UserProfile/EditProfile.dart';
 import 'package:hair_cos/Screens/ShopAppointments/ShopOwnerAppointments.dart';
 import 'package:hair_cos/Screens/ShopImages/ShopOwnerImages.dart';
 import 'package:hair_cos/Screens/ShopViewShop/ShopOwnerShop.dart';
+import 'package:hair_cos/Services/Images.dart';
 import 'package:hair_cos/StateContainers/LoginStateContainer.dart';
 import 'package:provider/provider.dart';
 
@@ -35,9 +36,7 @@ class _ShopOwnerHome extends State<ShopOwnerHome> {
             padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
             child: Center(
               child: CircleAvatar(
-                backgroundImage: profileImage == null
-                    ? AssetImage("asserts/no_profile.jpg")
-                    : NetworkImage(profileImage),
+                backgroundImage: ImageServices.getNetworkImage(profileImage),
                 radius: 75,
               ),
             ),
