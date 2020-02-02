@@ -47,8 +47,8 @@ class DatabaseServices {
     }
   }
 
-  void getProfile({Function onData}) async {
-    usersCollection
+  Future getProfile({Function onData}) async {
+    return await usersCollection
         .document(this.user.uid)
         .get()
         .then((DocumentSnapshot snapshot) {
@@ -57,14 +57,18 @@ class DatabaseServices {
   }
 
   User _toUser(DocumentSnapshot snap) {
-    return User(
-      uid: this.user.uid,
-      name: snap.data["Name"] ?? "No name",
-      email: snap.data["Email"] ?? "No email",
-      mobile: snap.data["Mobile"] ?? "No Mobile",
-      address: snap.data["Address"] ?? "No Address",
-      profileUrl: snap.data["ProfileUrl"],
-    );
+    try {
+      return User(
+        uid: this.user.uid,
+        name: snap.data["Name"] ?? "No name",
+        email: snap.data["Email"] ?? "No email",
+        mobile: snap.data["Mobile"] ?? "No Mobile",
+        address: snap.data["Address"] ?? "No Address",
+        profileUrl: snap.data["ProfileUrl"],
+      );
+    }catch(e){
+      return User(uid: null);
+    }
   }
 
   void uploadProfilePicture(File file, {Function onData}) {
@@ -110,4 +114,6 @@ class DatabaseServices {
       } catch (ex) {}
     }
   }
+
+
 }

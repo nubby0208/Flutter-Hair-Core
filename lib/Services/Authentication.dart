@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:hair_cos/Models/user.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hair_cos/Models/User.dart';
 
 class AuthenticationServices {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -10,7 +9,7 @@ class AuthenticationServices {
 
   // create user obj based on firebase user
   User _userFromFirebaseUser(FirebaseUser user) {
-    return user != null ? User(uid: user.uid) : null;
+    return (user != null) ? User(uid: user.uid, anonymous: user.isAnonymous) : null;
   }
 
   // auth change user stream
