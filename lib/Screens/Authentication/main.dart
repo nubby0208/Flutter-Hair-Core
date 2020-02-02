@@ -10,6 +10,7 @@ import 'package:hair_cos/Services/Authentication.dart';
 import 'package:hair_cos/Services/Database.dart';
 import 'package:hair_cos/StateContainers/LoginStateContainer.dart';
 
+
 void main() {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(
@@ -121,6 +122,7 @@ class loginContent extends StatelessWidget {
               container.updateUser(User(uid: "baokdnyeh73bh84hks"));
               container.database.getProfile(
                 onData: (User user) {
+                  user.anonymous = false;
                   container.updateUser(user);
                 },
               );
@@ -145,19 +147,27 @@ class loginContent extends StatelessWidget {
             "Login with google",
             Colors.red,
             Colors.white,
-            onPress: () {
-
-              AuthenticationServices().testSignInWithGoogle().whenComplete(
-                () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return navBar();
-                      },
-                    ),
-                  );
-                },
-              );
+            onPress: () async {
+             dynamic result = await AuthenticationServices().testSignInWithGoogle();
+             if (result == null){
+               errorDialog("Error signing in", context);
+             }else{
+               container.updateUser(
+                 User(
+                   uid: result.uid,
+                   email: result.email,
+                   name: result.displayName,
+                   profileUrl: result.photoUrl,
+                 ),
+               );
+               Navigator.of(context).push(
+                 MaterialPageRoute(
+                   builder: (context) {
+                     return navBar();
+                   },
+                 ),
+               );
+             }
             },
           ),
         ),
@@ -220,6 +230,23 @@ class loginContent extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  void errorDialog(String message, BuildContext context) {
+    showDialog(context: context, builder: (ctx) {
+      return AlertDialog(
+        title: Text("Error"),
+        content: Text(message),
+        actions: <Widget>[
+          FlatButton(
+            child: Text("Close"),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          )
+        ],
+      );
+    });
   }
 }
 
