@@ -133,6 +133,7 @@ class loginContent extends StatelessWidget {
                     email: user.email,
                     name: user.displayName,
                     profileUrl: user.photoUrl,
+                    mobile: user.phoneNumber,
                   );
                   container.database.editProfile(tempUser);
                   container.updateUser(tempUser);

@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hair_cos/Models/User.dart';
-import 'package:hair_cos/Screens/ShopHome/ShopOwnerHome.dart';
+import 'package:hair_cos/Screens/ShopHome/ShopNavBar.dart';
+import 'package:hair_cos/Screens/ShopHome/ShopOwnerProfile.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hair_cos/Services/Database.dart';
 import 'package:hair_cos/StateContainers/LoginStateContainer.dart';
@@ -164,7 +165,7 @@ class SignInButtons extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) {
-              return ShopOwnerHome();
+              return ShopNavBar();
             },
           ),
           (e) => false,

@@ -78,6 +78,7 @@ class _EditProfile extends State<EditProfile> {
               return EditDetails(
                 type: "Email",
                 text: email,
+                inputType: TextInputType.emailAddress,
                 onPress: (name) {
                   User user = container.database.user;
                   user.email = name;
@@ -102,6 +103,7 @@ class _EditProfile extends State<EditProfile> {
               return EditDetails(
                 type: "Mobile",
                 text: mobile,
+                inputType: TextInputType.phone,
                 onPress: (name) {
                   User user = container.database.user;
                   user.mobile = name;

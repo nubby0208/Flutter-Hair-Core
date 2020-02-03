@@ -85,7 +85,6 @@ class AuthenticationServices {
       assert(user.displayName != null);
       assert(!user.isAnonymous);
       assert(await user.getIdToken() != null);
-
       final FirebaseUser currentUser = await _auth.currentUser();
       assert(user.uid == currentUser.uid);
 
@@ -98,7 +97,6 @@ class AuthenticationServices {
 //sign out google
   void signOutGoogle() async {
     await googleSignIn.signOut();
-
     print("User Sign Out");
   }
 // sign in with email

@@ -1,7 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hair_cos/Models/User.dart';
 import 'package:hair_cos/Screens/Authentication/main.dart';
 import 'package:hair_cos/Screens/UserProfile/EditProfile.dart';
 import 'package:hair_cos/Screens/ShopAppointments/ShopOwnerAppointments.dart';
@@ -9,15 +7,14 @@ import 'package:hair_cos/Screens/ShopImages/ShopOwnerImages.dart';
 import 'package:hair_cos/Screens/ShopViewShop/ShopOwnerShop.dart';
 import 'package:hair_cos/Services/Images.dart';
 import 'package:hair_cos/StateContainers/LoginStateContainer.dart';
-import 'package:provider/provider.dart';
 
-class ShopOwnerHome extends StatefulWidget {
-  ShopOwnerHome();
+class ShopOwnerProfile extends StatefulWidget {
+  ShopOwnerProfile();
 
-  _ShopOwnerHome createState() => _ShopOwnerHome();
+  _ShopOwnerProfile createState() => _ShopOwnerProfile();
 }
 
-class _ShopOwnerHome extends State<ShopOwnerHome> {
+class _ShopOwnerProfile extends State<ShopOwnerProfile> {
   String profileImage = "asserts/barber_pic_1.jpg";
   String name;
 
@@ -29,7 +26,7 @@ class _ShopOwnerHome extends State<ShopOwnerHome> {
         : container.database.user.name;
     profileImage = container.database.user.profileUrl;
     return Scaffold(
-      appBar: AppBar(title: Text("Your home")),
+      appBar: AppBar(title: Text("Profile")),
       body: ListView(
         children: <Widget>[
           Padding(
@@ -66,49 +63,6 @@ class _ShopOwnerHome extends State<ShopOwnerHome> {
               ),
             ),
           ),
-          fullDivider(),
-          ListTile(
-            title: Text("View your shop"),
-            trailing: Icon(Icons.keyboard_arrow_right),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (BuildContext context) {
-                    return ShopOwnerShop();
-                  },
-                ),
-              );
-            },
-          ),
-          paddedDivider(),
-          ListTile(
-            title: Text("Images"),
-            trailing: Icon(Icons.keyboard_arrow_right),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (BuildContext context) {
-                    return ShopOwnerImages();
-                  },
-                ),
-              );
-            },
-          ),
-          paddedDivider(),
-          ListTile(
-            title: Text("Appointments"),
-            trailing: Icon(Icons.keyboard_arrow_right),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (BuildContext context) {
-                    return ShopOwnerAppointments();
-                  },
-                ),
-              );
-            },
-          ),
-          fullDivider(),
           logout()
         ],
       ),

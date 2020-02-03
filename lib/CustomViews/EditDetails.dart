@@ -5,8 +5,9 @@ class EditDetails extends StatefulWidget {
   String type = "Type";
   String text = "Text";
   Function onPress;
+  TextInputType inputType;
 
-  EditDetails({this.type, this.text, this.onPress});
+  EditDetails({this.type, this.text, this.onPress, this.inputType});
 
   _EditDetails createState() => _EditDetails();
 }
@@ -43,6 +44,7 @@ class _EditDetails extends State<EditDetails> {
             padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
             child: TextFormField(
               controller: controller,
+                keyboardType: widget.inputType ?? TextInputType.text,
                 decoration: InputDecoration(
                     labelText: '${widget.type}',
                     hintText: 'Enter your ${widget.type}',

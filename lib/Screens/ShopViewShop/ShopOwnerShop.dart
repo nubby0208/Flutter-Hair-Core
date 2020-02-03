@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hair_cos/CustomViews/EditDetails.dart';
+import 'package:hair_cos/Screens/ShopImages/ShopOwnerImages.dart';
 import 'package:hair_cos/Screens/ShopViewShop/ShopBookingTypes.dart';
+import 'package:hair_cos/Screens/ShopViewShop/ShopViewDetails.dart';
 import 'package:hair_cos/Screens/ShopViewShop/ShopWorkingHours.dart';
-
 import 'ShopMembers.dart';
 
 class ShopOwnerShop extends StatefulWidget {
@@ -11,11 +12,13 @@ class ShopOwnerShop extends StatefulWidget {
 }
 
 class _ShopOwnerShop extends State<ShopOwnerShop> {
+  String name = "People's Barbers";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Your Shop"),
+        title: Text("Home"),
       ),
       body: ListView(
         physics: BouncingScrollPhysics(),
@@ -24,52 +27,7 @@ class _ShopOwnerShop extends State<ShopOwnerShop> {
             child: Padding(
                 padding: EdgeInsets.fromLTRB(0, 0, 0, 10), child: getProfile()),
           ),
-          ListTile(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return EditDetails(
-                      type: "Shop Name",
-                      text: "People's Barber",
-                    );
-                  },
-                ),
-              );
-            },
-            leading: Icon(Icons.shop),
-            title: Text("Shop Name"),
-            subtitle: Text("People's Barber"),
-            trailing: Icon(Icons.keyboard_arrow_right),
-          ),
-          paddedDivider(),
-          ListTile(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return EditDetails(
-                      type: "Shop Address",
-                      text: "11 Bilby Gardens NG3 2GU",
-                    );
-                  },
-                ),
-              );
-            },
-            leading: Icon(Icons.location_on),
-            title: Text("Shop Address"),
-            subtitle: Text("11 Bilby Gardens NG3 2GU"),
-            trailing: Icon(Icons.keyboard_arrow_right),
-          ),
-          paddedDivider(),
-          Padding(
-              padding: EdgeInsets.fromLTRB(10, 5, 5, 0),
-              child: Text(
-                "Other Options",
-                style: TextStyle(fontSize: 20, color: Colors.blue),
-              )),
+          fullDivider(),
           ListTile(
             onTap: () {
               Navigator.push(
@@ -83,6 +41,7 @@ class _ShopOwnerShop extends State<ShopOwnerShop> {
             },
             title: Text("Shop Members"),
             trailing: Icon(Icons.keyboard_arrow_right),
+            leading: Icon(Icons.supervisor_account),
           ),
           paddedDivider(),
           ListTile(
@@ -96,8 +55,9 @@ class _ShopOwnerShop extends State<ShopOwnerShop> {
                 ),
               );
             },
-            title: Text("Your working hours"),
+            title: Text("Shop working hours"),
             trailing: Icon(Icons.keyboard_arrow_right),
+            leading: Icon(Icons.access_time),
           ),
           paddedDivider(),
           ListTile(
@@ -111,8 +71,24 @@ class _ShopOwnerShop extends State<ShopOwnerShop> {
                 ),
               );
             },
-            title: Text("Your Booking Types"),
+            title: Text("Shop Booking Types"),
             trailing: Icon(Icons.keyboard_arrow_right),
+            leading: Icon(Icons.book),
+          ),
+          paddedDivider(),
+          ListTile(
+            title: Text("Shop Images"),
+            trailing: Icon(Icons.keyboard_arrow_right),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (BuildContext context) {
+                    return ShopOwnerImages();
+                  },
+                ),
+              );
+            },
+            leading: Icon(Icons.image),
           ),
         ],
       ),
@@ -122,7 +98,7 @@ class _ShopOwnerShop extends State<ShopOwnerShop> {
   Widget paddedDivider() {
     return Divider(
       color: Colors.black,
-      indent: 20,
+      indent: 70,
     );
   }
 
@@ -132,12 +108,8 @@ class _ShopOwnerShop extends State<ShopOwnerShop> {
 
   Widget getProfile() {
     return Center(
-      child: Stack(
+      child: Column(
         children: <Widget>[
-          Container(
-            width: 150,
-            height: 150,
-          ),
           Container(
             width: 200,
             height: 200,
@@ -145,18 +117,34 @@ class _ShopOwnerShop extends State<ShopOwnerShop> {
               shape: BoxShape.rectangle,
               borderRadius: BorderRadius.all(Radius.circular(20)),
               image: DecorationImage(
-                  image: AssetImage("asserts/food.jpg"), fit: BoxFit.fill),
+                image: AssetImage("asserts/food.jpg"),
+                fit: BoxFit.fill,
+              ),
             ),
           ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: IconButton(
-              color: Colors.blue,
-              onPressed: () {},
-              icon: Icon(
-                Icons.edit,
-                size: 40,
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+            child: Text(
+              name,
+              style: TextStyle(fontSize: 20),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+            child: FlatButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return ShopViewDetails();
+                    },
+                  ),
+                );
+              },
+              child: Text(
+                "Edit Shop Details",
+                style: TextStyle(fontSize: 15, color: Colors.blue),
               ),
             ),
           )

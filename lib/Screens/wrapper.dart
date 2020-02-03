@@ -10,15 +10,12 @@ class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final User user = Provider.of<User>(context);
-    print(user);
     return user == null ? loginView() : HomePage(user, context);
   }
 
   Widget HomePage(User userPass, context) {
     final container = StateContainer.of(context);
-
     container.database.user.uid = userPass.uid;
-
     container.database.getProfile(
       onData: (User user) {
         if (user.uid == null || userPass.anonymous){
@@ -28,7 +25,6 @@ class Wrapper extends StatelessWidget {
         }
       },
     );
-
     return navBar();
   }
 }
