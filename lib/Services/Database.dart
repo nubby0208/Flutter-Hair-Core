@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:hair_cos/Models/ShopSignupData.dart';
 import 'package:hair_cos/Models/ShopUser.dart';
 import 'package:hair_cos/Models/User.dart';
 import 'package:hair_cos/Services/Storage.dart';
@@ -9,6 +10,8 @@ import 'Authentication.dart';
 
 class DatabaseServices {
   User user;
+  ShopUser shopUser = new ShopUser();
+
   final AuthenticationServices auth = AuthenticationServices();
   final StorageServices storage = StorageServices();
 
@@ -18,6 +21,8 @@ class DatabaseServices {
       Firestore.instance.collection("Users");
   final CollectionReference shopCollection =
       Firestore.instance.collection("Shops");
+  final CollectionReference newShopCollection =
+      Firestore.instance.collection("NewShops");
 
   DatabaseServices(this.user);
 
@@ -59,17 +64,22 @@ class DatabaseServices {
   }
 
   User _toUser(DocumentSnapshot snap) {
+    return User(
+      uid: snap.documentID,
+      name: getString(snap, "Name"),
+      email: getString(snap, "Email"),
+      mobile: getString(snap, "Mobile"),
+      address: getString(snap, "Address"),
+      profileUrl: getString(snap, "ProfileUrl"),
+      sid: getString(snap, "sid"),
+    );
+  }
+
+  String getString(DocumentSnapshot snap, String map) {
     try {
-      return User(
-        uid: this.user.uid,
-        name: snap.data["Name"] ?? "No name",
-        email: snap.data["Email"] ?? "No email",
-        mobile: snap.data["Mobile"] ?? "No Mobile",
-        address: snap.data["Address"] ?? "No Address",
-        profileUrl: snap.data["ProfileUrl"],
-      );
+      return snap.data[map];
     } catch (e) {
-      return User(uid: null);
+      return null;
     }
   }
 
@@ -159,12 +169,28 @@ class DatabaseServices {
   Future upLoadShopAddress({String sid, String address}) async {
     try {
       return await shopCollection.document(sid).updateData({
-        'ShopAddress': address,
+        'Address': address,
       });
     } catch (e) {
       try {
         return await shopCollection.document(sid).setData({
-          'ShopAddress': address,
+          'Address': address,
+        });
+      } catch (ex) {
+        return null;
+      }
+    }
+  }
+
+  Future upLoadShopAbout({String sid, String text}) async {
+    try {
+      return await shopCollection.document(sid).updateData({
+        'About': text,
+      });
+    } catch (e) {
+      try {
+        return await shopCollection.document(sid).setData({
+          'About': text,
         });
       } catch (ex) {
         return null;
@@ -175,12 +201,12 @@ class DatabaseServices {
   Future upLoadShopEmail({String sid, String email}) async {
     try {
       return await shopCollection.document(sid).updateData({
-        'ShopEmail': email,
+        'Email': email,
       });
     } catch (e) {
       try {
         return await shopCollection.document(sid).setData({
-          'ShopEmail': email,
+          'Email': email,
         });
       } catch (ex) {
         return null;
@@ -191,15 +217,42 @@ class DatabaseServices {
   Future upLoadShopContact({String sid, String contact}) async {
     try {
       return await shopCollection.document(sid).updateData({
-        'ShopContact': contact,
+        'Contact': contact,
       });
     } catch (e) {
       try {
         return await shopCollection.document(sid).setData({
-          'ShopContact': contact,
+          'Contact': contact,
         });
       } catch (ex) {
         return null;
+      }
+    }
+  }
+
+  void upLoadShopImage(
+      {String sid, File image, Function onData, prevUrl}) async {
+    try {
+      storage.upLoadFile(
+        image: image,
+        onData: (String profileUrl) {
+          storage.deleteFile(prevUrl);
+          onData(profileUrl);
+          _upLoadShopProfileName(profileUrl, sid);
+        },
+      );
+    } catch (e) {
+      try {
+        storage.upLoadFile(
+          image: image,
+          onData: (String profileUrl) {
+            storage.deleteFile(prevUrl);
+            onData(profileUrl);
+            _upLoadShopProfileName(profileUrl, sid);
+          },
+        );
+      } catch (ex) {
+        print(ex);
       }
     }
   }
@@ -215,12 +268,54 @@ class DatabaseServices {
       return ShopUser(
         sid: snapshot.documentID,
         name: snapshot.data["ShopName"] ?? "No Shop Name",
-        address: snapshot.data["ShopAddress"] ?? "No Shop Address",
-        email: snapshot.data["ShopEmail"] ?? "No Shop Email",
-        contact: snapshot.data["ShopContact"] ?? "No Shop Contact",
+        address: snapshot.data["Address"] ?? "No Shop Address",
+        email: snapshot.data["Email"] ?? "No Shop Email",
+        contact: snapshot.data["Contact"] ?? "No Shop Contact",
       );
     } catch (e) {
       return null;
+    }
+  }
+
+  Stream<DocumentSnapshot> get shopProfile {
+    return shopCollection.document(shopUser.sid).snapshots();
+  }
+
+  Stream<User> get userProfile {
+    return usersCollection.document(user.uid).snapshots().map(_toUser);
+  }
+
+  Future signUpShop(ShopSignUpData signUpData) async {
+    QuerySnapshot data = await newShopCollection.where("CreatorID", isEqualTo: signUpData.creatorID).getDocuments();
+    if (data.documents.isEmpty){
+      return null;
+    }
+    return newShopCollection.add(signUpData.toJson());
+  }
+}
+
+class DatabaseShopServices extends DatabaseServices {
+  DatabaseShopServices(User user) : super(user);
+
+  void searchShops({String text, Function onData}) async {
+    if (text == "Independant Owners"){
+      await shopCollection
+          .where("Indipendant", isEqualTo: true)
+          .getDocuments()
+          .then(
+            (QuerySnapshot snap) {
+          onData(snap);
+        },
+      );
+    }else {
+      await shopCollection
+          .where("Type", arrayContains: text)
+          .getDocuments()
+          .then(
+            (QuerySnapshot snap) {
+          onData(snap);
+        },
+      );
     }
   }
 }

@@ -29,12 +29,12 @@ class _Profile extends State<Profile> {
         title: Text("Profile"),
       ),
       body: container.database.user.anonymous != null
-          ? ( container.database.user.anonymous ? noProfile() : content(context))
+          ? (container.database.user.anonymous ? noProfile() : content(context))
           : content(context),
     );
   }
 
-  Widget noProfile(){
+  Widget noProfile() {
     return Center(
       child: InkWell(
         onTap: () {
@@ -45,7 +45,7 @@ class _Profile extends State<Profile> {
     );
   }
 
-  Widget content(BuildContext context){
+  Widget content(BuildContext context) {
     return ListView(
       children: <Widget>[
         Padding(
@@ -59,24 +59,28 @@ class _Profile extends State<Profile> {
         ),
         Center(
             child: Text(
-              name,
-              style: TextStyle(fontSize: 20),
-            )),
+          name,
+          style: TextStyle(fontSize: 20),
+        )),
         Center(
-            child: Padding(
-                padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                child: FlatButton(
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                          return EditProfile();
-                        }));
-                  },
-                  child: Text(
-                    "Edit account",
-                    style: TextStyle(fontSize: 15, color: Colors.blue),
-                  ),
-                ))),
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+            child: FlatButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return EditProfile();
+                }));
+              },
+              child: Text(
+                "Edit account",
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Theme.of(context).accentColor,
+                ),
+              ),
+            ),
+          ),
+        ),
         Divider(
           color: Colors.black,
         ),
@@ -140,7 +144,7 @@ class _Profile extends State<Profile> {
     );
   }
 
-  void signOut(){
+  void signOut() {
     container.database.auth.signOut();
   }
 }

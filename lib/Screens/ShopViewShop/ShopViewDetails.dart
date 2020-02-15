@@ -1,8 +1,13 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hair_cos/CustomViews/EditDetails.dart';
 import 'package:hair_cos/Models/ShopUser.dart';
+import 'package:hair_cos/Services/Images.dart';
 import 'package:hair_cos/StateContainers/LoginStateContainer.dart';
+import 'package:provider/provider.dart';
 
 class ShopViewDetails extends StatefulWidget {
   @override
@@ -15,24 +20,16 @@ class _ShopViewDetailsState extends State<ShopViewDetails> {
   String shopAddress = "";
   String shopEmail = "";
   String shopContact = "";
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  String shopProfile = "";
+  String shopAbout = "";
+  var container;
+  var shopData;
 
   @override
   Widget build(BuildContext context) {
-    final container = StateContainer.of(context);
-    StateContainer.of(context).database.getShopProfile(
-      sid,
-      onData: (ShopUser user) {
-        shopName = user.name;
-        shopAddress = user.address;
-        shopEmail = user.email;
-        shopContact = user.contact;
-      },
-    );
+    container = StateContainer.of(context);
+    shopData = Provider.of<DocumentSnapshot>(context);
+    getAttributes();
     return Scaffold(
       appBar: AppBar(
         title: Text("Edit Shop Details"),
@@ -114,7 +111,7 @@ class _ShopViewDetailsState extends State<ShopViewDetails> {
                 ),
               );
             },
-            leading: Icon(Icons.shop),
+            leading: Icon(Icons.email),
             title: Text("Shop Email"),
             subtitle: Text(shopEmail),
             trailing: Icon(Icons.keyboard_arrow_right),
@@ -141,9 +138,35 @@ class _ShopViewDetailsState extends State<ShopViewDetails> {
                 ),
               );
             },
-            leading: Icon(Icons.shop),
+            leading: Icon(Icons.phone),
             title: Text("Shop Contact"),
             subtitle: Text(shopContact),
+            trailing: Icon(Icons.keyboard_arrow_right),
+          ),
+          paddedDivider(),
+          ListTile(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return EditDetails(
+                      type: "Shop About",
+                      text: shopAbout,
+                      onPress: (txt) {
+                        container.database.upLoadShopAbout(
+                          sid: sid,
+                          text: txt,
+                        );
+                      },
+                    );
+                  },
+                ),
+              );
+            },
+            leading: Icon(Icons.info),
+            title: Text("About"),
+            subtitle: Text("$shopAbout"),
             trailing: Icon(Icons.keyboard_arrow_right),
           ),
         ],
@@ -175,9 +198,13 @@ class _ShopViewDetailsState extends State<ShopViewDetails> {
             height: 200,
             decoration: BoxDecoration(
               shape: BoxShape.rectangle,
-              borderRadius: BorderRadius.all(Radius.circular(20)),
+              borderRadius: BorderRadius.all(
+                Radius.circular(20),
+              ),
               image: DecorationImage(
-                  image: AssetImage("asserts/food.jpg"), fit: BoxFit.fill),
+                image: ImageServices.getNetworkImage(shopProfile),
+                fit: BoxFit.fill,
+              ),
             ),
           ),
           Positioned(
@@ -185,7 +212,19 @@ class _ShopViewDetailsState extends State<ShopViewDetails> {
             right: 0,
             child: IconButton(
               color: Colors.blue,
-              onPressed: () {},
+              onPressed: () async {
+                File file = await ImageServices.getImageFromCamera();
+                container.database.upLoadShopImage(
+                  sid: sid,
+                  image: file,
+                  onData: (profileUrl) {
+                    setState(() {
+                      this.shopProfile = profileUrl;
+                    });
+                  },
+                  prevUrl: shopProfile,
+                );
+              },
               icon: Icon(
                 Icons.edit,
                 size: 40,
@@ -195,5 +234,15 @@ class _ShopViewDetailsState extends State<ShopViewDetails> {
         ],
       ),
     );
+  }
+
+  void getAttributes() {
+    sid = shopData.documentID;
+    shopName = shopData.data["ShopName"] ?? "No name";
+    shopAddress = shopData.data["Address"] ?? "No address";
+    shopEmail = shopData.data["Email"] ?? "No email";
+    shopContact = shopData.data["Contact"] ?? "No contact";
+    shopProfile = shopData.data["ProfileUrl"];
+    shopAbout = shopData.data["About"] ?? "No About";
   }
 }

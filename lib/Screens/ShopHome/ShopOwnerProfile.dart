@@ -15,7 +15,7 @@ class ShopOwnerProfile extends StatefulWidget {
 }
 
 class _ShopOwnerProfile extends State<ShopOwnerProfile> {
-  String profileImage = "asserts/barber_pic_1.jpg";
+  String profileImage = "";
   String name;
 
   @override
@@ -81,23 +81,22 @@ class _ShopOwnerProfile extends State<ShopOwnerProfile> {
   }
 
   Widget logout() {
+    final container = StateContainer.of(context);
     return Padding(
       padding: EdgeInsets.all(5),
       child: InkWell(
         onTap: () {
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-            builder: (context) {
-              return MyApp();
-            },
-          ), (e) => false);
+          container.database.auth.signOut();
         },
         child: Padding(
           padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
-          child: Text("Logout",
-              style: TextStyle(
-                fontSize: 25,
-                color: Colors.blue,
-              )),
+          child: Text(
+            "Logout",
+            style: TextStyle(
+              fontSize: 25,
+              color: Colors.blue,
+            ),
+          ),
         ),
       ),
     );

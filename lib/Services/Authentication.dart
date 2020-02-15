@@ -9,7 +9,9 @@ class AuthenticationServices {
 
   // create user obj based on firebase user
   User _userFromFirebaseUser(FirebaseUser user) {
-    return (user != null) ? User(uid: user.uid, anonymous: user.isAnonymous) : null;
+    return (user != null)
+        ? User(uid: user.uid, anonymous: user.isAnonymous)
+        : null;
   }
 
   // auth change user stream
@@ -73,7 +75,7 @@ class AuthenticationServices {
     try {
       final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
       final GoogleSignInAuthentication googleAuth =
-      await googleUser.authentication;
+          await googleUser.authentication;
       final AuthCredential credential = GoogleAuthProvider.getCredential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
@@ -89,7 +91,7 @@ class AuthenticationServices {
       assert(user.uid == currentUser.uid);
 
       return signIn;
-    }catch(e){
+    } catch (e) {
       return null;
     }
   }

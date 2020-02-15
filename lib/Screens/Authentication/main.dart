@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hair_cos/Models/User.dart';
-import 'package:hair_cos/Screens/wrapper.dart';
+import 'package:hair_cos/Screens/Authentication/wrapper.dart';
 import 'package:hair_cos/Services/Authentication.dart';
 import 'package:hair_cos/Services/Database.dart';
 import 'package:hair_cos/StateContainers/LoginStateContainer.dart';
@@ -25,6 +25,14 @@ class MyApp extends StatelessWidget {
           home: Scaffold(
             resizeToAvoidBottomPadding: false,
             body: Wrapper(),
+          ),
+          theme: ThemeData(
+            // Define the default brightness and colors.
+            brightness: Brightness.light,
+            primaryColor: Colors.blue[900],
+            accentColor: Colors.indigo,
+            // Define the default font family.
+            fontFamily: 'Georgia',
           ),
         ),
       ),

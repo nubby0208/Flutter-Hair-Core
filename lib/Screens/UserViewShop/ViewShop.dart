@@ -5,6 +5,7 @@ import 'package:hair_cos/CustomViews/ExpandableText.dart';
 import 'package:hair_cos/CustomViews/RatingBar.dart';
 import 'package:hair_cos/Screens/UserViewShop/ViewBookingTypes.dart';
 import 'package:hair_cos/Screens/UserViewShop/ViewAllComments.dart';
+import 'package:hair_cos/Services/Images.dart';
 
 class ViewShop extends StatefulWidget {
   final String name;
@@ -30,6 +31,7 @@ class _ViewShop extends State<ViewShop> {
 
   final names = ['Zic', 'Ken', 'Caleb'];
   bool liked = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,9 +44,15 @@ class _ViewShop extends State<ViewShop> {
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
               title: Text(widget.name),
-              background: Image.asset(
-                widget.profilePicture,
-                fit: BoxFit.fitWidth,
+              background: Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: ImageServices.getNetworkImage(
+                      widget.profilePicture,
+                    ),
+                    fit: BoxFit.fitWidth,
+                  ),
+                ),
               ),
             ),
             actions: <Widget>[
@@ -372,7 +380,7 @@ class _ViewShop extends State<ViewShop> {
                 ClipRRect(
                     borderRadius: BorderRadius.circular(30),
                     child: Container(
-                        width: MediaQuery.of(context).size.width *0.8,
+                        width: MediaQuery.of(context).size.width * 0.8,
                         height: MediaQuery.of(context).size.width * 0.8,
                         color: Colors.white,
                         child: Image.asset(

@@ -38,7 +38,7 @@ class _navBar extends State<navBar> {
         body: callPage(selectedIndex),
         backgroundColor: Colors.white,
         bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Colors.blue,
+          backgroundColor: Theme.of(context).primaryColor,
           selectedItemColor: Colors.white,
           unselectedItemColor: Colors.black,
           currentIndex: selectedIndex,
@@ -57,6 +57,7 @@ class _navBar extends State<navBar> {
           ],
         ),
       ),
+      theme: Theme.of(context),
     );
   }
 }

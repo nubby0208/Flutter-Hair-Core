@@ -6,6 +6,7 @@ class User {
   String mobile;
   String address;
   bool anonymous = false;
+  String sid;
 
   User({
     this.profileUrl,
@@ -15,6 +16,7 @@ class User {
     this.mobile,
     this.address,
     this.anonymous,
+    this.sid,
   });
 
   bool isUidEmpty() {

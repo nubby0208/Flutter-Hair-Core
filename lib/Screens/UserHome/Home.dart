@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hair_cos/Screens/ShopSignUp/ShopServices.dart';
+import 'package:hair_cos/Screens/UserHome/ShopSearch.dart';
 import 'package:hair_cos/Screens/UserViewShop/ViewShop.dart';
 
 class Home extends StatefulWidget {
@@ -7,152 +9,64 @@ class Home extends StatefulWidget {
 }
 
 class _Home extends State<Home> {
-  final names = ['People\'s Barber', 'Mike and Ken', 'Kenny all star'];
-  final images = [
-    "asserts/barber_pic_1.jpg",
-    "asserts/barber_pic_2.jpg",
-    "asserts/barber_pic_3.jpg"
-  ];
-  final address = [
-    "11 Bilby Gardens NG3 2GU",
-    "52 Rosewarn Close BA2 1PB",
-    "University of bath BA2 7AY"
-  ];
-  Widget searchBar = Text("HairCos");
-  Icon searchIcon = Icon(Icons.search);
-  String type = "list";
-  var liked = [false, false, false];
+  var serviceType = [];
+  String pic = "asserts/shop_picture.jpg";
+
+  @override
+  void initState() {
+    super.initState();
+    serviceType = ServicesTypes.serviceType;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: searchBar,
-          actions: <Widget>[
-            IconButton(
-                onPressed: () {
-                  setState(() {
-                    if (this.searchIcon.icon == Icons.search) {
-                      this.searchIcon = Icon(Icons.cancel);
-                      this.searchBar = TextField(
-                          onSubmitted: (String value) {
-                            this.searchIcon = Icon(Icons.search);
-                            this.searchBar = Text("HairCos");
-                            type = "list";
-                          },
-                          style: TextStyle(color: Colors.white),
-                          decoration: InputDecoration(hintText: 'Search'));
-                      type = "search";
-                    } else {
-                      this.searchIcon = Icon(Icons.search);
-                      this.searchBar = Text("HairCos");
-                      type = "list";
-                    }
-                  });
-                },
-                icon: searchIcon)
-          ],
+      appBar: AppBar(
+        title: Text("Hair Cos"),
+      ),
+      body: GridView.builder(
+        physics: BouncingScrollPhysics(),
+        primary: false,
+        padding: const EdgeInsets.all(20),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
         ),
-        body: getWidget(this.type));
+        itemBuilder: (context, index) {
+          return cards(
+            pic: pic,
+            name: serviceType[index],
+            onData: () {},
+          );
+        },
+        itemCount: serviceType.length,
+      ),
+    );
   }
 
-  Widget getWidget(String type) {
-    switch (type) {
-      case "list":
-        {
-          return getList();
-        }
-        break;
-      case "search":
-        {
-          return getSearch();
-        }
-    }
-  }
-
-  Widget getSearch() {
-    return Container(color: Colors.white, width: 1000, height: 1000);
-  }
-
-  Widget getList() {
-    return ListView.separated(
-      itemCount: names.length,
-      physics: BouncingScrollPhysics(),
-      itemBuilder: (BuildContext context, int index) {
-        return FlatButton(
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return ViewShop(names[index], images[index]);
-              }));
-            },
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                  child: Stack(
-                    children: <Widget>[
-                      Container(
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey,
-                              offset: Offset(5.0, 5.0),
-                              blurRadius: 5,
-                            ),
-                          ],
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(15),
-                              topRight: Radius.circular(15),
-                              bottomRight: Radius.circular(15),
-                              bottomLeft: Radius.circular(15)),
-                          child: Image.asset(
-                            images[index],
-                            width: MediaQuery.of(context).size.width * 0.95,
-                            height: MediaQuery.of(context).size.width * 0.95,
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: IconButton(
-                          onPressed: () {
-                            setState(
-                              () {
-                                liked[index] = !liked[index];
-                              },
-                            );
-                          },
-                          icon: Icon(
-                            liked[index]
-                                ? Icons.favorite
-                                : Icons.favorite_border,
-                            size: 35,
-                            color: Colors.white,
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Text(
-                  " " + names[index],
-                  style: TextStyle(color: Colors.black, fontSize: 25),
-                ),
-                Text(
-                  "  " + address[index],
-                  style: TextStyle(color: Colors.black54, fontSize: 15),
-                )
-              ],
-            ));
+  Widget cards({String pic, String name, Function onData}) {
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(builder: (context){
+          return ShopSearch(searchType: name,);
+        }));
       },
-      separatorBuilder: (BuildContext context, int index) {
-        return Divider(color: Colors.black);
-      },
+      child: Card(
+        elevation: 5,
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(pic),
+              fit: BoxFit.fitWidth,
+            ),
+          ),
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: Text(name),
+          ),
+        ),
+      ),
     );
   }
 }

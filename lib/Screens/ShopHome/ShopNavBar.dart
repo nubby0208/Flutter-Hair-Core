@@ -1,8 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hair_cos/Screens/ShopAppointments/ShopOwnerAppointments.dart';
 import 'package:hair_cos/Screens/ShopHome/ShopOwnerProfile.dart';
 import 'package:hair_cos/Screens/ShopViewShop/ShopOwnerShop.dart';
+import 'package:hair_cos/StateContainers/LoginStateContainer.dart';
+import 'package:provider/provider.dart';
 
 class ShopNavBar extends StatefulWidget {
   @override
@@ -34,12 +37,15 @@ class _ShopNavBarState extends State<ShopNavBar> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: getPage(selectedIndex),
-        backgroundColor: Colors.white,
+    final container = StateContainer.of(context);
+    return StreamProvider<DocumentSnapshot>.value(
+      value: container.database.shopProfile,
+      child: MaterialApp(
+        home: Scaffold(
+          body: getPage(selectedIndex),
+          backgroundColor: Colors.white,
           bottomNavigationBar: BottomNavigationBar(
-            backgroundColor: Colors.blue,
+            backgroundColor: Theme.of(context).primaryColor,
             selectedItemColor: Colors.white,
             unselectedItemColor: Colors.black,
             currentIndex: selectedIndex,
@@ -56,7 +62,9 @@ class _ShopNavBarState extends State<ShopNavBar> {
               BottomNavigationBarItem(
                   icon: Icon(Icons.person), title: Text("Profile"))
             ],
-          )
+          ),
+        ),
+        theme: Theme.of(context),
       ),
     );
   }

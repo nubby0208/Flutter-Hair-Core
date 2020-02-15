@@ -169,7 +169,7 @@ class _EditProfile extends State<EditProfile> {
               child: IconButton(
                 color: Colors.blue,
                 onPressed: () async {
-                  File file = await ImageServices.getImageFromCamera();
+                  File file = await ImageServices.getImageFromGallery();
                   StateContainer.of(context).database.uploadProfilePicture(
                     file,
                     onData: (image) {
