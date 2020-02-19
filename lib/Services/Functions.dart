@@ -1,4 +1,0 @@
-
-class FunctionsServices{
-  // implement later
-}
