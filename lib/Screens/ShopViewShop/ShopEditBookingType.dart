@@ -4,7 +4,7 @@ import 'package:hair_cos/Models/BookingType.dart';
 import 'package:hair_cos/CustomViews/EditDetails.dart';
 
 class ShopEditBookingType extends StatefulWidget {
-  BookingType bookingType;
+  final BookingType bookingType;
   ShopEditBookingType({@required this.bookingType});
 
   @override

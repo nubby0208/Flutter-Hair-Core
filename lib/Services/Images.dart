@@ -8,6 +8,8 @@ class ImageServices{
 
   static Future getImageFromGallery() async{
     return await ImagePicker.pickImage(source: ImageSource.gallery);
+
+  
   }
 
   static ImageProvider getNetworkImage(url){

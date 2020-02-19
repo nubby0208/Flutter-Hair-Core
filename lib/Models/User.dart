@@ -1,4 +1,4 @@
-class User {
+/* class User {
   String uid;
   String profileUrl;
   String name;
@@ -42,4 +42,20 @@ class User {
   bool isProfileUrlEmpty() {
     return profileUrl == null;
   }
+}
+
+ */
+
+
+class User {
+  static final User _singleton = User._internal();
+  factory User() => _singleton;
+  User._internal();
+  static User get userData => _singleton;
+  String name;
+  String userId;
+  String userEmail;
+  String userNumber;
+  String address;
+  String userPhoto;
 }

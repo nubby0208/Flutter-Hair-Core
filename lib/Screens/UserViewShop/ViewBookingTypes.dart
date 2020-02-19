@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hair_cos/CustomViews/ExpandableView.dart';
-import 'package:hair_cos/Models/BookingInfo.dart';
 import 'package:hair_cos/Screens/UserViewShop/MakeBooking.dart';
 
 class ViewBookingTypes extends StatefulWidget {
@@ -11,13 +10,13 @@ class ViewBookingTypes extends StatefulWidget {
 class _ViewBookingTypes extends State<ViewBookingTypes> {
   var tittles = ["Men's cut", "Kid's cut", "Women's cut"];
   var types = ["Hair cut", "Beard cut", "Hairline"];
-  List<bookingTypes> list = List<bookingTypes>();
+  List<BookingTypes> list = List<BookingTypes>();
 
   @override
   Widget build(BuildContext context) {
-    list = List<bookingTypes>();
+    list = List<BookingTypes>();
     for (int i = 0; i < tittles.length; i++) {
-      bookingTypes temp = bookingTypes();
+      BookingTypes temp = BookingTypes();
       temp.addToList(types, context);
       temp.title = tittles[i];
       list.add(temp);
@@ -49,7 +48,7 @@ class _ViewBookingTypes extends State<ViewBookingTypes> {
   }
 }
 
-class bookingTypes {
+class BookingTypes {
   final images = [
     "asserts/barber_pic_1.jpg",
     "asserts/barber_pic_2.jpg",
@@ -64,7 +63,7 @@ class bookingTypes {
       list.add(InkWell(
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
-              BookingInfo info = new BookingInfo();
+              // BookingInfo info = new BookingInfo();
               return MakeBooking(
                 bookingInfo: arr[i],
               );

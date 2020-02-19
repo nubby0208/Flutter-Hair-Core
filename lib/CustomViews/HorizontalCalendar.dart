@@ -1,11 +1,10 @@
-import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hair_cos/Models/DateConversion.dart';
 
 class HorizontalCalendar extends StatefulWidget {
-  Function onDatePress;
-  double width;
+  final Function onDatePress;
+  final double width;
   HorizontalCalendar({this.onDatePress, @required this.width});
 
   _HorizontalCalendar createState() => _HorizontalCalendar();

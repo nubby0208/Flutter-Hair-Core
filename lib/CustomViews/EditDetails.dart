@@ -5,8 +5,8 @@ import 'package:hair_cos/CustomViews/CustomButton.dart';
 class EditDetails extends StatefulWidget {
   String type = "Type";
   String text = "Text";
-  Function onPress;
-  TextInputType inputType;
+ final Function onPress;
+ final TextInputType inputType;
 
   EditDetails({@required this.type, this.text, this.onPress, this.inputType});
 

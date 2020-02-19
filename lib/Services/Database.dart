@@ -9,13 +9,10 @@ import 'package:hair_cos/Services/Storage.dart';
 import 'Authentication.dart';
 
 class DatabaseServices {
-  User user;
   ShopUser shopUser = new ShopUser();
 
-  final AuthenticationServices auth = AuthenticationServices();
+  final Auth auth = Auth();
   final StorageServices storage = StorageServices();
-
-  void upDateUser(User _user) => user = _user;
 
   final CollectionReference usersCollection =
       Firestore.instance.collection("Users");
@@ -24,14 +21,12 @@ class DatabaseServices {
   final CollectionReference newShopCollection =
       Firestore.instance.collection("NewShops");
 
-  DatabaseServices(this.user);
-
-  Future editProfile(User user) async {
+  /* Future editProfile(User user) async {
     try {
-      return await usersCollection.document(this.user.uid).updateData(
+      return await usersCollection.document(User.userData.userId).updateData(
         {
           'Name': user.name,
-          'Email': user.email,
+          'Email': ,
           'Mobile': user.mobile,
           'Address': user.address,
           'ProfileUrl': user.profileUrl,
@@ -52,27 +47,23 @@ class DatabaseServices {
         print(ex);
       }
     }
-  }
+  } */
 
   Future getProfile({Function onData}) async {
     return await usersCollection
-        .document(this.user.uid)
+        .document(User.userData.userId)
         .get()
         .then((DocumentSnapshot snapshot) {
       onData(_toUser(snapshot));
     });
   }
 
-  User _toUser(DocumentSnapshot snap) {
-    return User(
-      uid: snap.documentID,
-      name: getString(snap, "Name"),
-      email: getString(snap, "Email"),
-      mobile: getString(snap, "Mobile"),
-      address: getString(snap, "Address"),
-      profileUrl: getString(snap, "ProfileUrl"),
-      sid: getString(snap, "sid"),
-    );
+  _toUser(DocumentSnapshot snap) {
+    User.userData.userId = snap.documentID;
+    User.userData.name = getString(snap, "Name");
+    User.userData.userEmail = getString(snap, "Email");
+    User.userData.userNumber = getString(snap, "Mobile");
+    User.userData.userPhoto = getString(snap, "ProfileUrl");
   }
 
   String getString(DocumentSnapshot snap, String map) {
@@ -97,12 +88,12 @@ class DatabaseServices {
 
   Future upLoadProfileName(String url) async {
     try {
-      return await usersCollection.document(this.user.uid).updateData({
+      return await usersCollection.document(User.userData.userId).updateData({
         'ProfileUrl': url,
       });
     } catch (e) {
       try {
-        return await usersCollection.document(this.user.uid).setData({
+        return await usersCollection.document(User.userData.userId).setData({
           'ProfileUrl': url,
         });
       } catch (ex) {
@@ -143,7 +134,7 @@ class DatabaseServices {
     storage.upLoadFile(
       image: file,
       onData: (String profileUrl) {
-        storage.deleteFile(this.user.profileUrl);
+        storage.deleteFile(User.userData.userPhoto);
         onData(profileUrl);
         upLoadProfileName(profileUrl);
       },
@@ -282,12 +273,14 @@ class DatabaseServices {
   }
 
   Stream<User> get userProfile {
-    return usersCollection.document(user.uid).snapshots().map(_toUser);
+    return usersCollection.document(User.userData.userId).snapshots().map(_toUser);
   }
 
   Future signUpShop(ShopSignUpData signUpData) async {
-    QuerySnapshot data = await newShopCollection.where("CreatorID", isEqualTo: signUpData.creatorID).getDocuments();
-    if (data.documents.isEmpty){
+    QuerySnapshot data = await newShopCollection
+        .where("CreatorID", isEqualTo: signUpData.creatorID)
+        .getDocuments();
+    if (data.documents.isEmpty) {
       return null;
     }
     return newShopCollection.add(signUpData.toJson());
@@ -295,24 +288,24 @@ class DatabaseServices {
 }
 
 class DatabaseShopServices extends DatabaseServices {
-  DatabaseShopServices(User user) : super(user);
+  //DatabaseShopServices(User user) : super(user);
 
   void searchShops({String text, Function onData}) async {
-    if (text == "Independant Owners"){
+    if (text == "Independant Owners") {
       await shopCollection
           .where("Indipendant", isEqualTo: true)
           .getDocuments()
           .then(
-            (QuerySnapshot snap) {
+        (QuerySnapshot snap) {
           onData(snap);
         },
       );
-    }else {
+    } else {
       await shopCollection
           .where("Type", arrayContains: text)
           .getDocuments()
           .then(
-            (QuerySnapshot snap) {
+        (QuerySnapshot snap) {
           onData(snap);
         },
       );

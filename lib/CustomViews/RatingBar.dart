@@ -37,7 +37,7 @@ class _RatingBar extends State<RatingBar> {
               return Icon(Icons.star, color: widget.unHighLightedColor, size: widget.starSize,);
             }else {
               return Icon(Icons.star, color: widget.highlightColor, size: widget.starSize,);
-            };
+            }
           },
         ));
   }

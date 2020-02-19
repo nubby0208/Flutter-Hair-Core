@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:hair_cos/CustomViews/AppointmentsTile.dart';
-import 'package:hair_cos/CustomViews/HorizontalCalendar.dart';
 import 'package:hair_cos/Models/DateConversion.dart';
 import 'package:table_calendar/table_calendar.dart';
 

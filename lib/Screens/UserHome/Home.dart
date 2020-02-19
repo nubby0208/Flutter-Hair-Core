@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hair_cos/Screens/ShopSignUp/ShopServices.dart';
 import 'package:hair_cos/Screens/UserHome/ShopSearch.dart';
-import 'package:hair_cos/Screens/UserViewShop/ViewShop.dart';
 
 class Home extends StatefulWidget {
   _Home createState() => _Home();

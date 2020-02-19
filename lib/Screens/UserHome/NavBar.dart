@@ -4,11 +4,11 @@ import 'package:hair_cos/Screens/UserAppointments/Appointments.dart';
 import 'package:hair_cos/Screens/UserHome/Home.dart';
 import 'package:hair_cos/Screens/UserProfile/Profile.dart';
 
-class navBar extends StatefulWidget {
-  _navBar createState() => _navBar();
+class NavBar extends StatefulWidget {
+  _NavBar createState() => _NavBar();
 }
 
-class _navBar extends State<navBar> {
+class _NavBar extends State<NavBar> {
   int selectedIndex = 0;
 
   Widget callPage(int index) {

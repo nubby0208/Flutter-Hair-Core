@@ -1,10 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hair_cos/Screens/Authentication/main.dart';
+import 'package:hair_cos/Models/User.dart';
 import 'package:hair_cos/Screens/UserProfile/EditProfile.dart';
-import 'package:hair_cos/Screens/ShopAppointments/ShopOwnerAppointments.dart';
-import 'package:hair_cos/Screens/ShopImages/ShopOwnerImages.dart';
-import 'package:hair_cos/Screens/ShopViewShop/ShopOwnerShop.dart';
+
 import 'package:hair_cos/Services/Images.dart';
 import 'package:hair_cos/StateContainers/LoginStateContainer.dart';
 
@@ -20,11 +18,8 @@ class _ShopOwnerProfile extends State<ShopOwnerProfile> {
 
   @override
   Widget build(BuildContext context) {
-    final container = StateContainer.of(context);
-    name = container.database.user.isNameEmpty()
-        ? "No name"
-        : container.database.user.name;
-    profileImage = container.database.user.profileUrl;
+   
+    
     return Scaffold(
       appBar: AppBar(title: Text("Profile")),
       body: ListView(
@@ -40,7 +35,9 @@ class _ShopOwnerProfile extends State<ShopOwnerProfile> {
           ),
           Center(
               child: Text(
-            "$name",
+             User.userData.name==null
+        ? "No name"
+        : User.userData.name,
             style: TextStyle(fontSize: 20),
           )),
           Center(

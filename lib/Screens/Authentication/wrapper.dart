@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:hair_cos/CustomViews/CustomButton.dart';
+/* import 'package:flutter/material.dart';
 import 'package:hair_cos/CustomViews/Loading.dart';
 import 'package:hair_cos/Models/ShopUser.dart';
 import 'package:hair_cos/Models/User.dart';
@@ -123,3 +122,4 @@ class _MakeChoiceOfScreenState extends State<MakeChoiceOfScreen> {
     );
   }
 }
+ */

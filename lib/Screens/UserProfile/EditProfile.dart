@@ -1,10 +1,8 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hair_cos/CustomViews/EditDetails.dart';
 import 'package:hair_cos/Services/Database.dart';
-import 'package:hair_cos/Models/User.dart';
 import 'package:hair_cos/Services/Images.dart';
 import 'package:hair_cos/StateContainers/LoginStateContainer.dart';
 
@@ -30,9 +28,8 @@ class _EditProfile extends State<EditProfile> {
 
   @override
   Widget build(BuildContext context) {
-    var container = StateContainer.of(context);
-    setAttributes(container);
-    profileImage = container.database.user.profileUrl;
+    //setAttributes(container);
+    
 
     return Scaffold(
       appBar: AppBar(
@@ -53,10 +50,8 @@ class _EditProfile extends State<EditProfile> {
                     type: "Name",
                     text: name,
                     onPress: (name) {
-                      User user = container.database.user;
-                      user.name = name;
-                      container.database.editProfile(user);
-                      container.updateUser(user);
+                      
+                     
                     },
                   );
                 },
@@ -80,10 +75,10 @@ class _EditProfile extends State<EditProfile> {
                 text: email,
                 inputType: TextInputType.emailAddress,
                 onPress: (name) {
-                  User user = container.database.user;
+                  /* User user = container.database.user;
                   user.email = name;
                   container.database.editProfile(user);
-                  container.updateUser(user);
+                  container.updateUser(user); */
                 },
               );
             }));
@@ -105,10 +100,10 @@ class _EditProfile extends State<EditProfile> {
                 text: mobile,
                 inputType: TextInputType.phone,
                 onPress: (name) {
-                  User user = container.database.user;
+                 /*  User user = container.database.user;
                   user.mobile = name;
                   container.database.editProfile(user);
-                  container.updateUser(user);
+                  container.updateUser(user); */
                 },
               );
             }));
@@ -132,10 +127,10 @@ class _EditProfile extends State<EditProfile> {
                     type: "Address",
                     text: address,
                     onPress: (name) {
-                      User user = container.database.user;
+                      /* User user = container.database.user;
                       user.address = name;
                       container.database.editProfile(user);
-                      container.updateUser(user);
+                      container.updateUser(user); */
                     },
                   );
                 },
@@ -173,9 +168,9 @@ class _EditProfile extends State<EditProfile> {
                   StateContainer.of(context).database.uploadProfilePicture(
                     file,
                     onData: (image) {
-                      User user = StateContainer.of(context).database.user;
-                      user.profileUrl = image;
-                      StateContainer.of(context).updateUser(user);
+                     /*  User user = StateContainer.of(context).database.user;
+                      User.userData.userPhoto = image;
+                      StateContainer.of(context).updateUser(user); */
                       setState(() {});
                     },
                   );
@@ -190,7 +185,7 @@ class _EditProfile extends State<EditProfile> {
     );
   }
 
-  void setAttributes(container) {
+  /* void setAttributes(container) {
     name = StateContainer.of(context).database.user.isNameEmpty()
         ? "No name"
         : StateContainer.of(context).database.user.name;
@@ -203,7 +198,7 @@ class _EditProfile extends State<EditProfile> {
     address = StateContainer.of(context).database.user.isAddressEmpty()
         ? "No address"
         : StateContainer.of(context).database.user.address;
-  }
+  } */
 }
 
 /**

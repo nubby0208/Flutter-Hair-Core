@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hair_cos/CustomViews/CommentView.dart';
 import 'package:hair_cos/CustomViews/ExpandableText.dart';
-import 'package:hair_cos/CustomViews/RatingBar.dart';
 import 'package:hair_cos/Screens/UserViewShop/ViewBookingTypes.dart';
 import 'package:hair_cos/Screens/UserViewShop/ViewAllComments.dart';
 import 'package:hair_cos/Services/Images.dart';

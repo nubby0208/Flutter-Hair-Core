@@ -2,14 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hair_cos/CustomViews/Loading.dart';
-import 'package:hair_cos/Models/User.dart';
 import 'package:hair_cos/Screens/ShopSignUp/ShopServices.dart';
 import 'package:hair_cos/Screens/UserViewShop/ViewShop.dart';
 import 'package:hair_cos/Services/Database.dart';
 import 'package:hair_cos/Services/Images.dart';
 
 class ShopSearch extends StatefulWidget {
-  String searchType;
+ final String searchType;
 
   ShopSearch({this.searchType});
 
@@ -179,7 +178,7 @@ class _ShopSearchState extends State<ShopSearch> {
   }
 
   void search(String searchTerm) {
-    DatabaseShopServices db = DatabaseShopServices(User());
+    DatabaseShopServices db = DatabaseShopServices();
     db.searchShops(
       text: searchTerm,
       onData: (QuerySnapshot snapshot) {

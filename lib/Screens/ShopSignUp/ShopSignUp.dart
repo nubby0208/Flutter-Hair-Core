@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hair_cos/CustomViews/CustomButton.dart';
 import 'package:hair_cos/CustomViews/EditDetails.dart';
 import 'package:hair_cos/Models/ShopSignupData.dart';
+import 'package:hair_cos/Models/User.dart';
 import 'package:hair_cos/Screens/ShopSignUp/ShopServices.dart';
 import 'package:hair_cos/StateContainers/LoginStateContainer.dart';
 
@@ -331,7 +332,7 @@ class _ShopSignUpState extends State<ShopSignUp> {
 
   void signUpShop() {
     var container = StateContainer.of(context);
-    if (container.database.user.sid != null){
+    if (User.userData.userId != null){
       errorDialog(
         "This account is already part of a shop, leave previous shop to create a new one",
         context,
@@ -340,7 +341,7 @@ class _ShopSignUpState extends State<ShopSignUp> {
     }
     if (validateInfo()) {
       ShopSignUpData data = ShopSignUpData(
-        creatorID: container.database.user.uid,
+        creatorID: User.userData.userId,
         shopName: shopName,
         members: members,
         type: servicesProvided,

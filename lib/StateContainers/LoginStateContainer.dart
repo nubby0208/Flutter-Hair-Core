@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hair_cos/Models/ShopUser.dart';
-import 'package:hair_cos/Models/User.dart';
 import 'package:hair_cos/Services/Database.dart';
 
 class StateContainer extends StatefulWidget {
@@ -26,11 +25,7 @@ class _StateContainerState extends State<StateContainer> {
     database = widget.database;
   }
 
-  updateUser(User user) {
-    setState(() {
-      database.user = user;
-    });
-  }
+  
 
   updateShopUser(ShopUser shopUser){
     setState(() {

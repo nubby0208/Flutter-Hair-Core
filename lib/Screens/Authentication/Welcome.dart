@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hair_cos/CustomViews/CustomButton.dart';
-import 'package:hair_cos/Screens/ShopSignUp/ShopSignUp.dart';
 import 'package:hair_cos/Screens/Authentication/login.dart';
 import 'package:hair_cos/Screens/Authentication/signup.dart';
 
@@ -42,64 +41,66 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 0, 0, 40),
       child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.fromLTRB(40, 0, 40, 20),
-              child: CustomButton.roundedButton(
-                context,
-                txt: "Login".toUpperCase(),
-                onPress: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return loginView();
-                      },
-                    ),
-                  );
-                },
-              ),
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.fromLTRB(40, 0, 40, 20),
+            child: CustomButton.roundedButton(
+              context,
+              txt: "Login".toUpperCase(),
+              onPress: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return LoginView();
+                    },
+                  ),
+                );
+              },
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(40, 0, 40, 20),
-              child: CustomButton.roundedButton(
-                context,
-                txt: "Signup".toUpperCase(),
-                background: Colors.white,
-                textColor: Colors.black,
-                borderColor: Theme.of(context).primaryColor,
-                onPress: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return SignUp();
-                      },
-                    ),
-                  );
-                },
-              ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(40, 0, 40, 20),
+            child: CustomButton.roundedButton(
+              context,
+              txt: "Signup".toUpperCase(),
+              background: Colors.white,
+              textColor: Colors.black,
+              borderColor: Theme.of(context).primaryColor,
+              onPress: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return SignUp();
+                    },
+                  ),
+                );
+              },
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(40, 0, 40, 0),
-              child: CustomButton.roundedButton(
-                context,
-                txt: "Bussiness signup".toUpperCase(),
-                background: Colors.white,
-                textColor: Colors.black,
-                borderColor: Theme.of(context).primaryColor,
-                onPress: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return SignUp(shopSignUp: true,);
-                      },
-                    ),
-                  );
-                },
-              ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(40, 0, 40, 0),
+            child: CustomButton.roundedButton(
+              context,
+              txt: "Bussiness signup".toUpperCase(),
+              background: Colors.white,
+              textColor: Colors.black,
+              borderColor: Theme.of(context).primaryColor,
+              onPress: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return SignUp(
+                        shopSignUp: true,
+                      );
+                    },
+                  ),
+                );
+              },
             ),
-          ],
+          ),
+        ],
       ),
     );
   }

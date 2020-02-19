@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class NamedTittle extends StatefulWidget {
-  String title;
-  String subTitle;
+ final  String title;
+ final  String subTitle;
 
   NamedTittle({@required this.title, @required this.subTitle});
 

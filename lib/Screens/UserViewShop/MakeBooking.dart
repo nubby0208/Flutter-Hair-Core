@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class MakeBooking extends StatefulWidget {
-  String bookingInfo;
+ final String bookingInfo;
 
   MakeBooking({@required this.bookingInfo});
 

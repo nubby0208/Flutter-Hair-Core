@@ -1,16 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hair_cos/CustomViews/CustomButton.dart';
 import 'package:hair_cos/CustomViews/Loading.dart';
-import 'package:hair_cos/Models/ShopUser.dart';
-import 'package:hair_cos/Models/User.dart';
-import 'package:hair_cos/Screens/ShopHome/ShopNavBar.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:hair_cos/Screens/ShopSignUp/ShopSignUp.dart';
-import 'package:hair_cos/Services/Authentication.dart';
-import 'package:hair_cos/StateContainers/LoginStateContainer.dart';
+
 
 class SignUp extends StatelessWidget {
   final bool shopSignUp;
@@ -132,7 +126,7 @@ class _SignUpContent extends State<SignUpContent> {
                 ),
                 IconButton(
                   onPressed: () async {
-                    googleLogin(context);
+                    //googleLogin(context);
                   },
                   icon: Icon(
                     FontAwesomeIcons.google,
@@ -148,7 +142,7 @@ class _SignUpContent extends State<SignUpContent> {
     );
   }
 
-  void googleLogin(context) async {
+  /* void googleLogin(context) async {
     final container = StateContainer.of(context);
     load(true);
     dynamic result = await AuthenticationServices().testSignInWithGoogle();
@@ -157,7 +151,6 @@ class _SignUpContent extends State<SignUpContent> {
       errorDialog("Error signing in", context);
     } else {
       FirebaseUser user = result.user;
-      container.updateUser(User(uid: user.uid));
       if (result.additionalUserInfo.isNewUser) {
         User tempUser = User(
           uid: user.uid,
@@ -186,7 +179,7 @@ class _SignUpContent extends State<SignUpContent> {
 
       Navigator.of(context).pop();
     }
-  }
+  } */
 
   void errorDialog(String message, BuildContext context) {
     showDialog(

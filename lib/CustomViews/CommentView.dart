@@ -5,10 +5,10 @@ import 'ExpandableText.dart';
 import 'RatingBar.dart';
 
 class CommentView extends StatefulWidget {
-  String image;
-  String name;
-  int rating;
-  String text;
+ final String image;
+ final String name;
+ final int rating;
+ final String text;
 
   CommentView(
       {@required this.image,
@@ -22,7 +22,6 @@ class CommentView extends StatefulWidget {
 class _CommentView extends State<CommentView> {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,

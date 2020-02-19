@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hair_cos/Models/User.dart';
 
-class AuthenticationServices {
+class Auth {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -10,7 +10,7 @@ class AuthenticationServices {
   // create user obj based on firebase user
   User _userFromFirebaseUser(FirebaseUser user) {
     return (user != null)
-        ? User(uid: user.uid, anonymous: user.isAnonymous)
+        ? User.userData.userId == null ? user.isAnonymous : user.uid
         : null;
   }
 

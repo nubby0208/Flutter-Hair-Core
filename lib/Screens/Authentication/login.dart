@@ -1,14 +1,13 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hair_cos/CustomViews/CustomButton.dart';
 import 'package:hair_cos/CustomViews/Loading.dart';
-import 'package:hair_cos/Models/User.dart';
-import 'package:hair_cos/Services/Authentication.dart';
-import 'package:hair_cos/StateContainers/LoginStateContainer.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:hair_cos/Services/Authentication.dart';
 
-class loginView extends StatelessWidget {
+class LoginView extends StatelessWidget {
+  final Auth auth;
+  LoginView({this.auth});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,7 +68,6 @@ class _LoginContentState extends State<LoginContent> {
 
   @override
   Widget build(BuildContext context) {
-    final container = StateContainer.of(context);
     return loading
         ? Loading()
         : ListView(
@@ -118,7 +116,7 @@ class _LoginContentState extends State<LoginContent> {
                       ),
                       IconButton(
                         onPressed: () async {
-                          googleLogin(context);
+                          //googleLogin(context);
                         },
                         icon: Icon(
                           FontAwesomeIcons.google,
@@ -136,8 +134,8 @@ class _LoginContentState extends State<LoginContent> {
                   child: InkWell(
                     onTap: () async {
                       load(true);
-                      dynamic result =
-                          await container.database.auth.signInAnon();
+                      /* dynamic result =
+                          await widget.auth.signInAnon();
                       if (result == null) {
                         load(false);
                         print('error signing in');
@@ -145,14 +143,9 @@ class _LoginContentState extends State<LoginContent> {
                         print('signed in');
                         print(result.uid);
                         // creates user
-                        container.updateUser(
-                          User(
-                            uid: result.uid,
-                            anonymous: true,
-                          ),
-                        );
+                        
                         Navigator.of(context).pop();
-                      }
+                      } */
                     },
                     child: Text("Continue as Guest"),
                   ),
@@ -182,7 +175,7 @@ class _LoginContentState extends State<LoginContent> {
     );
   }
 
-  void googleLogin(context) async {
+ /*  void googleLogin(context) async {
     final container = StateContainer.of(context);
     load(true);
     dynamic result = await AuthenticationServices().testSignInWithGoogle();
@@ -211,7 +204,7 @@ class _LoginContentState extends State<LoginContent> {
       }
       Navigator.of(context).pop();
     }
-  }
+  } */
 
   Widget loginButtons({txt, background, textColor, onPress}) {
     return RaisedButton(

@@ -2,12 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AppointmentsTile extends StatefulWidget {
-  double width;
-  double height;
-  Function onTap;
-  Widget top;
-  Widget middle;
-  Widget bottom;
+ final  double width;
+ final  double height;
+ final  Function onTap;
+ final  Widget top;
+ final  Widget middle;
+ final  Widget bottom;
 
   AppointmentsTile({
     @required this.width,

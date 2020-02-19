@@ -1,7 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/cupertino.dart' as prefix0;
 import 'package:flutter/material.dart';
-import 'package:hair_cos/Screens/Authentication/main.dart';
 import 'package:hair_cos/Screens/UserProfile/EditProfile.dart';
 import 'package:hair_cos/Services/Images.dart';
 import 'package:hair_cos/StateContainers/LoginStateContainer.dart';

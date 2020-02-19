@@ -6,7 +6,6 @@ import 'package:hair_cos/Screens/ShopViewShop/ShopBookingTypes.dart';
 import 'package:hair_cos/Screens/ShopViewShop/ShopViewDetails.dart';
 import 'package:hair_cos/Screens/ShopViewShop/ShopWorkingHours.dart';
 import 'package:hair_cos/Services/Images.dart';
-import 'package:hair_cos/StateContainers/LoginStateContainer.dart';
 import 'package:provider/provider.dart';
 import 'ShopMembers.dart';
 
@@ -19,7 +18,6 @@ class _ShopOwnerShop extends State<ShopOwnerShop> {
 
   @override
   Widget build(BuildContext context) {
-    final container = StateContainer.of(context);
     return  Scaffold(
         appBar: AppBar(
           title: Text("Home"),
