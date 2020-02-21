@@ -1,11 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hair_cos/CustomViews/CustomButton.dart';
 import 'package:hair_cos/CustomViews/Loading.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hair_cos/Models/User.dart';
+import 'package:hair_cos/Screens/ShopSignUp/ShopSignUp.dart';
 import 'package:hair_cos/Screens/UserHome/Home.dart';
 import 'package:hair_cos/Services/Authentication.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -64,11 +68,13 @@ class LoginContent extends StatefulWidget {
 }
 
 class _LoginContentState extends State<LoginContent> {
+  final GoogleSignIn googleSignIn = GoogleSignIn();
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   bool loading = false;
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final userEmail = TextEditingController();
   final userPassword = TextEditingController();
   bool onSave = false;
+  FirebaseUser currentUser;
 
   @override
   void initState() {
@@ -116,7 +122,7 @@ class _LoginContentState extends State<LoginContent> {
                     padding: EdgeInsets.fromLTRB(30, 0, 30, 5),
                     child: CustomButton.roundedButton(context,
                         txt: "Login".toUpperCase(), onPress: () {
-                      save(true);
+                      load(true);
 
                       _logIn();
                     }),
@@ -138,7 +144,10 @@ class _LoginContentState extends State<LoginContent> {
                       child: Wrap(
                         children: <Widget>[
                           IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              load(true);
+                              facebookSignin(context);
+                            },
                             icon: Icon(
                               FontAwesomeIcons.facebookSquare,
                               color: Colors.indigo,
@@ -147,7 +156,7 @@ class _LoginContentState extends State<LoginContent> {
                           ),
                           IconButton(
                             onPressed: () async {
-                              //googleLogin(context);
+                              googleLogin(context);
                             },
                             icon: Icon(
                               FontAwesomeIcons.google,
@@ -333,7 +342,7 @@ class _LoginContentState extends State<LoginContent> {
   void _logIn() async {
     if (userEmail.text.isNotEmpty) {
       try {
-        await _firebaseAuth
+        await firebaseAuth
             .signInWithEmailAndPassword(
                 email: userEmail.text, password: userPassword.text)
             .then((onValue) async {
@@ -351,6 +360,8 @@ class _LoginContentState extends State<LoginContent> {
             gravity: ToastGravity.BOTTOM,
             timeInSecForIos: 1,
           );
+          load(false);
+
           print(signinError);
         } else if (signinError.toString().contains("ERROR_USER_NOT_FOUND")) {
           Fluttertoast.showToast(
@@ -359,6 +370,7 @@ class _LoginContentState extends State<LoginContent> {
             gravity: ToastGravity.BOTTOM,
             timeInSecForIos: 1,
           );
+          load(false);
           print(signinError);
         } else if (signinError.toString().contains("ERROR_WRONG_PASSWORD")) {
           Fluttertoast.showToast(
@@ -367,6 +379,7 @@ class _LoginContentState extends State<LoginContent> {
             gravity: ToastGravity.BOTTOM,
             timeInSecForIos: 1,
           );
+          load(false);
           print(signinError);
         } else if (signinError
             .toString()
@@ -377,13 +390,15 @@ class _LoginContentState extends State<LoginContent> {
             gravity: ToastGravity.BOTTOM,
             timeInSecForIos: 1,
           );
+          load(false);
           print(signinError);
         } else {
+          load(false);
           print(signinError);
         }
       }
     } else {
-      save(false);
+      load(false);
       Fluttertoast.showToast(
           msg: 'Please enter an email.',
           toastLength: Toast.LENGTH_SHORT,
@@ -391,7 +406,7 @@ class _LoginContentState extends State<LoginContent> {
           timeInSecForIos: 1);
     }
     if (userPassword.text.isEmpty) {
-      save(false);
+      load(false);
       Fluttertoast.showToast(
           msg: 'Please enter password.',
           toastLength: Toast.LENGTH_SHORT,
@@ -400,16 +415,62 @@ class _LoginContentState extends State<LoginContent> {
     }
   }
 
-  /*  void googleLogin(context) async {
-    final container = StateContainer.of(context);
+  void googleLogin(context) async {
     load(true);
-    dynamic result = await AuthenticationServices().testSignInWithGoogle();
-    if (result == null) {
+
+    GoogleSignInAccount googleUser = await googleSignIn.signIn();
+    GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+    final AuthCredential credential = GoogleAuthProvider.getCredential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    FirebaseUser firebaseUser =
+        (await firebaseAuth.signInWithCredential(credential)).user;
+
+    if (firebaseUser != null) {
+      // Check is already sign up
+      final QuerySnapshot result = await Firestore.instance
+          .collection('Users')
+          .where('id', isEqualTo: firebaseUser.uid)
+          .getDocuments();
+      final List<DocumentSnapshot> documents = result.documents;
+      if (documents.length == 0) {
+        // Update data to server if new user
+        Firestore.instance
+            .collection('Users')
+            .document(firebaseUser.uid)
+            .setData({
+          'id': firebaseUser.uid,
+          'profile_photo': firebaseUser.photoUrl,
+          'Email': firebaseUser.email,
+          'Name': firebaseUser.displayName,
+          'Mobile': firebaseUser.phoneNumber,
+        });
+
+        // Write data to local
+        currentUser = firebaseUser;
+        User.userData.userId = firebaseUser.uid;
+      } else {
+        // Write data to local
+        User.userData.userId = documents[0].documentID;
+      }
+      Fluttertoast.showToast(msg: "Sign in success");
       load(false);
+
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => ShopSignUp()));
+    } else {
+      Fluttertoast.showToast(msg: "Sign in fail");
+      load(false);
+    }
+
+    /* if (result == null) {
+      
       errorDialog("Error signing in", context);
     } else {
       FirebaseUser user = result.user;
-      container.updateUser(User(uid: user.uid));
       if (result.additionalUserInfo.isNewUser) {
         User tempUser = User(
           uid: user.uid,
@@ -427,9 +488,94 @@ class _LoginContentState extends State<LoginContent> {
           },
         );
       }
+      if (widget.shopSignUp != null) {
+        if (widget.shopSignUp == true) {
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) {
+            return ();
+          }));
+          return;
+        }
+      }
+
       Navigator.of(context).pop();
+    } */
+  }
+
+  facebookSignin(BuildContext context) async {
+    FirebaseUser firebaseUser;
+    final facebookLogin = new FacebookLogin();
+    facebookLogin.loginBehavior = FacebookLoginBehavior.webViewOnly;
+
+    final facebookLoginResult = await facebookLogin
+        .logInWithReadPermissions(['email', 'public_profile']);
+
+    switch (facebookLoginResult.status) {
+      case FacebookLoginStatus.error:
+        load(false);
+        print("Error");
+        break;
+
+      case FacebookLoginStatus.cancelledByUser:
+        load(false);
+        print("CancelledByUser");
+        break;
+
+      case FacebookLoginStatus.loggedIn:
+        load(false);
+        print("LoggedIn");
+        AuthCredential credential = FacebookAuthProvider.getCredential(
+            accessToken: facebookLoginResult.accessToken.token);
+        firebaseUser =
+            (await firebaseAuth.signInWithCredential(credential)).user;
+        print(firebaseUser);
+        if (firebaseUser != null) {
+          // Check is already sign up
+          final QuerySnapshot result = await Firestore.instance
+              .collection('Users')
+              .where('id', isEqualTo: firebaseUser.uid)
+              .getDocuments();
+          final List<DocumentSnapshot> documents = result.documents;
+          if (documents.length == 0) {
+            // Update data to server if new user
+            Firestore.instance
+                .collection('Users')
+                .document(firebaseUser.uid)
+                .setData({
+              'id': firebaseUser.uid,
+              'profile_photo': firebaseUser.photoUrl,
+              'Email': firebaseUser.email,
+              'Name': firebaseUser.displayName,
+              'Mobile': firebaseUser.phoneNumber,
+            });
+
+            // Write data to local
+            currentUser = firebaseUser;
+            User.userData.userId = firebaseUser.uid;
+          } else {
+            // Write data to local
+            User.userData.userId = documents[0].documentID;
+          }
+          Fluttertoast.showToast(msg: "Sign in success");
+          load(false);
+
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => ShopSignUp()));
+        } else {
+          Fluttertoast.showToast(msg: "Sign in fail");
+          load(false);
+        }
+
+        // final token = facebookLoginResult.accessToken.token;
+        /* final graphResponse = await http.get(
+            'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=${token}');
+        final profile = json.decode(graphResponse.body);
+        print(profile["email"]); */
+        //await firebaseUser.updateEmail(profile["email"]);
+        return null;
+        break;
     }
-  } */
+  }
 
   Widget loginButtons({txt, background, textColor, onPress}) {
     return RaisedButton(

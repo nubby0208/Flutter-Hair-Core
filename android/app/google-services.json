@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "573583486063-fomh7oeoosuoatri6e4ot21sgj6g52he.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.HairCos.hair_cos",
+            "certificate_hash": "bb77d99fa270fa55bb45bf151e966e0c5597416e"
+          }
+        },
+        {
+          "client_id": "573583486063-784b4q8ubnvj5irffqmlik5irn7vus45.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.HairCos.hair_cos",
+            "certificate_hash": "35ec6d0c90e61a04b0383ce70cf16866ebde9646"
+          }
+        },
+        {
           "client_id": "573583486063-jdj1t9gan7a13qrsrccrf5bkb1uqmnhg.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -45,28 +61,12 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:573583486063:android:d5bbe122f9f2eea2be319a",
+        "mobilesdk_app_id": "1:573583486063:android:c38f4b4cc21e2e29be319a",
         "android_client_info": {
-          "package_name": "com.mzimkhulu.hair_cos"
+          "package_name": "com.HairCos.hair_cos_verify"
         }
       },
       "oauth_client": [
-        {
-          "client_id": "573583486063-mtrek5rgflnsi9d8r7ob4v2cefgrn0ne.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.mzimkhulu.hair_cos",
-            "certificate_hash": "cb2c253f80ae63c87ef65f2486c32539a9cc3c3b"
-          }
-        },
-        {
-          "client_id": "573583486063-99gmmsbtc2g97qi32e884e34fmina28t.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.mzimkhulu.hair_cos",
-            "certificate_hash": "35ec6d0c90e61a04b0383ce70cf16866ebde9646"
-          }
-        },
         {
           "client_id": "573583486063-hkhtqeegj0sthguql1aecmmr30cdk528.apps.googleusercontent.com",
           "client_type": 3

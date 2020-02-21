@@ -125,6 +125,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.4.10"
+  flutter_facebook_login:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: e69fef3
+      resolved-ref: e69fef34c994938cce9d716b64e05e4d212dc858
+      url: "https://github.com/roughike/flutter_facebook_login"
+    source: git
+    version: "1.2.0"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:

@@ -2,13 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hair_cos/CustomViews/CustomButton.dart';
 import 'package:hair_cos/CustomViews/Loading.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hair_cos/Models/User.dart';
 import 'package:hair_cos/Screens/Authentication/login.dart';
+import 'package:hair_cos/Screens/ShopSignUp/ShopSignUp.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 class SignUp extends StatelessWidget {
@@ -66,12 +69,15 @@ class SignUpContent extends StatefulWidget {
 }
 
 class _SignUpContent extends State<SignUpContent> {
+  final GoogleSignIn googleSignIn = GoogleSignIn();
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   bool loading = false;
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final userEmail = TextEditingController();
   final userPassword = TextEditingController();
   final userConfirmPass = TextEditingController();
   bool onSave = false;
+  FirebaseUser currentUser;
+
   @override
   Widget build(BuildContext context) {
     return loading
@@ -138,7 +144,7 @@ class _SignUpContent extends State<SignUpContent> {
                       timeInSecForIos: 1,
                     );
                   } else {
-                    save(true);
+                    load(true);
 
                     _register();
                   }
@@ -149,7 +155,10 @@ class _SignUpContent extends State<SignUpContent> {
                     child: Wrap(
                       children: <Widget>[
                         IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            load(true);
+                            facebookSignin(context);
+                          },
                           icon: Icon(
                             FontAwesomeIcons.facebookSquare,
                             color: Colors.indigo,
@@ -158,7 +167,7 @@ class _SignUpContent extends State<SignUpContent> {
                         ),
                         IconButton(
                           onPressed: () async {
-                            //googleLogin(context);
+                            googleLogin(context);
                           },
                           icon: Icon(
                             FontAwesomeIcons.google,
@@ -174,12 +183,59 @@ class _SignUpContent extends State<SignUpContent> {
             ));
   }
 
-  /* void googleLogin(context) async {
-    final container = StateContainer.of(context);
+  void googleLogin(context) async {
     load(true);
-    dynamic result = await AuthenticationServices().testSignInWithGoogle();
-    if (result == null) {
+
+    GoogleSignInAccount googleUser = await googleSignIn.signIn();
+    GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+    final AuthCredential credential = GoogleAuthProvider.getCredential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    FirebaseUser firebaseUser =
+        (await firebaseAuth.signInWithCredential(credential)).user;
+
+    if (firebaseUser != null) {
+      // Check is already sign up
+      final QuerySnapshot result = await Firestore.instance
+          .collection('Users')
+          .where('id', isEqualTo: firebaseUser.uid)
+          .getDocuments();
+      final List<DocumentSnapshot> documents = result.documents;
+      if (documents.length == 0) {
+        // Update data to server if new user
+        Firestore.instance
+            .collection('Users')
+            .document(firebaseUser.uid)
+            .setData({
+          'id': firebaseUser.uid,
+          'profile_photo': firebaseUser.photoUrl,
+          'Email': firebaseUser.email,
+          'Name': firebaseUser.displayName,
+          'Mobile': firebaseUser.phoneNumber,
+        });
+
+        // Write data to local
+        currentUser = firebaseUser;
+        User.userData.userId = firebaseUser.uid;
+      } else {
+        // Write data to local
+        User.userData.userId = documents[0].documentID;
+      }
+      Fluttertoast.showToast(msg: "Sign in success");
       load(false);
+
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => ShopSignUp()));
+    } else {
+      Fluttertoast.showToast(msg: "Sign in fail");
+      load(false);
+    }
+
+    /* if (result == null) {
+      
       errorDialog("Error signing in", context);
     } else {
       FirebaseUser user = result.user;
@@ -202,16 +258,89 @@ class _SignUpContent extends State<SignUpContent> {
       }
       if (widget.shopSignUp != null) {
         if (widget.shopSignUp == true) {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){
-            return ShopSignUp();
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) {
+            return ();
           }));
           return;
         }
       }
 
       Navigator.of(context).pop();
+    } */
+  }
+
+  facebookSignin(BuildContext context) async {
+    FirebaseUser firebaseUser;
+    final facebookLogin = new FacebookLogin();
+    facebookLogin.loginBehavior = FacebookLoginBehavior.webViewOnly;
+
+    final facebookLoginResult = await facebookLogin
+        .logInWithReadPermissions(['email', 'public_profile']);
+
+    switch (facebookLoginResult.status) {
+      case FacebookLoginStatus.error:
+        print("Error");
+        break;
+
+      case FacebookLoginStatus.cancelledByUser:
+        print("CancelledByUser");
+        break;
+
+      case FacebookLoginStatus.loggedIn:
+        print("LoggedIn");
+        AuthCredential credential = FacebookAuthProvider.getCredential(
+            accessToken: facebookLoginResult.accessToken.token);
+        firebaseUser =
+            (await firebaseAuth.signInWithCredential(credential)).user;
+        print(firebaseUser);
+        if (firebaseUser != null) {
+          // Check is already sign up
+          final QuerySnapshot result = await Firestore.instance
+              .collection('Users')
+              .where('id', isEqualTo: firebaseUser.uid)
+              .getDocuments();
+          final List<DocumentSnapshot> documents = result.documents;
+          if (documents.length == 0) {
+            // Update data to server if new user
+            Firestore.instance
+                .collection('Users')
+                .document(firebaseUser.uid)
+                .setData({
+              'id': firebaseUser.uid,
+              'profile_photo': firebaseUser.photoUrl,
+              'Email': firebaseUser.email,
+              'Name': firebaseUser.displayName,
+              'Mobile': firebaseUser.phoneNumber,
+            });
+
+            // Write data to local
+            currentUser = firebaseUser;
+            User.userData.userId = firebaseUser.uid;
+          } else {
+            // Write data to local
+            User.userData.userId = documents[0].documentID;
+          }
+          Fluttertoast.showToast(msg: "Sign in success");
+          load(false);
+
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => ShopSignUp()));
+        } else {
+          Fluttertoast.showToast(msg: "Sign in fail");
+          load(false);
+        }
+
+        // final token = facebookLoginResult.accessToken.token;
+        /* final graphResponse = await http.get(
+            'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=${token}');
+        final profile = json.decode(graphResponse.body);
+        print(profile["email"]); */
+        //await firebaseUser.updateEmail(profile["email"]);
+        return null;
+        break;
     }
-  } */
+  }
 
   void save(bool state) {
     setState(() {
@@ -242,13 +371,16 @@ class _SignUpContent extends State<SignUpContent> {
   void _register() async {
     if (userEmail.text.isNotEmpty) {
       try {
-        FirebaseUser user = (await _firebaseAuth.createUserWithEmailAndPassword(
+        FirebaseUser user = (await firebaseAuth.createUserWithEmailAndPassword(
                 email: userEmail.text, password: userPassword.text))
             .user;
         print('${user.uid}');
         if (user != null) {
-          Firestore.instance.collection('Users').document(user.uid).setData({
-            'Email': userEmail.text,
+          Firestore.instance
+              .collection('Users')
+              .document(user.uid.toString())
+              .setData({
+            'Email': userEmail.text.trim(),
             'profile_photo': "",
           });
           User.userData.userId = user.uid.toString();
@@ -268,6 +400,7 @@ class _SignUpContent extends State<SignUpContent> {
             gravity: ToastGravity.BOTTOM,
             timeInSecForIos: 1,
           );
+          load(false);
           print(signupError);
         } else if (signupError.toString().contains("ERROR_INVALID_EMAIL")) {
           Fluttertoast.showToast(
@@ -276,6 +409,7 @@ class _SignUpContent extends State<SignUpContent> {
             gravity: ToastGravity.BOTTOM,
             timeInSecForIos: 1,
           );
+          load(false);
           print(signupError);
         } else if (signupError.toString().contains("ERROR_WEAK_PASSWORD")) {
           Fluttertoast.showToast(
@@ -284,6 +418,7 @@ class _SignUpContent extends State<SignUpContent> {
             gravity: ToastGravity.BOTTOM,
             timeInSecForIos: 1,
           );
+          load(false);
           print(signupError);
         } else if (signupError
             .toString()
@@ -294,6 +429,7 @@ class _SignUpContent extends State<SignUpContent> {
             gravity: ToastGravity.BOTTOM,
             timeInSecForIos: 1,
           );
+          load(false);
           print(signupError);
         }
       }
@@ -303,6 +439,7 @@ class _SignUpContent extends State<SignUpContent> {
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIos: 1);
+      load(false);
     }
   }
 
