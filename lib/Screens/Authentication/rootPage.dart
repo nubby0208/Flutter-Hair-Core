@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hair_cos/Models/User.dart';
 import 'package:hair_cos/Screens/Authentication/Welcome.dart';
 import 'package:hair_cos/Screens/UserHome/Home.dart';
+import 'package:hair_cos/Screens/UserHome/NavBar.dart';
 
 class RootPage extends StatefulWidget {
   @override
@@ -63,7 +64,7 @@ class _RootPageState extends State<RootPage> {
             ),
           ));
     } else if (login == 2) {
-      return Home();
+      return NavBar();
     } else {
       return WelcomeScreen();
     }
@@ -81,6 +82,7 @@ class _RootPageState extends State<RootPage> {
       User.userData.userPhoto = userdata['ProfileUrl'];
     });
     print('${User.userData.name}');
+    print('${User.userData.userId}');
     print('${User.userData.userPhoto}');
   }
 }

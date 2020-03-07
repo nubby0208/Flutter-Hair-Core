@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hair_cos/Products/products.dart';
 import 'package:hair_cos/Screens/UserAppointments/Appointments.dart';
 import 'package:hair_cos/Screens/UserHome/Home.dart';
 import 'package:hair_cos/Screens/UserProfile/Profile.dart';
@@ -13,14 +14,19 @@ class _NavBar extends State<NavBar> {
 
   Widget callPage(int index) {
     switch (index) {
-      case 2:
+      case 3:
         {
           return Profile();
         }
         break;
-      case 1:
+      case 2:
         {
           return Appointments();
+        }
+        break;
+      case 1:
+        {
+          return Products();
         }
         break;
       default:
@@ -38,10 +44,11 @@ class _NavBar extends State<NavBar> {
         body: callPage(selectedIndex),
         backgroundColor: Colors.white,
         bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Theme.of(context).primaryColor,
+          backgroundColor: Colors.blue,
           selectedItemColor: Colors.white,
           unselectedItemColor: Colors.black,
           currentIndex: selectedIndex,
+          type: BottomNavigationBarType.fixed,
           onTap: (int index) {
             setState(() {
               selectedIndex = index;
@@ -50,6 +57,8 @@ class _NavBar extends State<NavBar> {
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
                 icon: Icon(Icons.home), title: Text("Home")),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.archive), title: Text("Products")),
             BottomNavigationBarItem(
                 icon: Icon(Icons.book), title: Text("Appointments")),
             BottomNavigationBarItem(

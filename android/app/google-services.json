@@ -15,11 +15,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "573583486063-fomh7oeoosuoatri6e4ot21sgj6g52he.apps.googleusercontent.com",
+          "client_id": "573583486063-at8jvhhrb6h3pfn00a6s7q8npu2e8ucb.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.HairCos.hair_cos",
             "certificate_hash": "bb77d99fa270fa55bb45bf151e966e0c5597416e"
+          }
+        },
+        {
+          "client_id": "573583486063-aq5p1ttljr5boqctvbpcf1ehlk977tv3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.HairCos.hair_cos",
+            "certificate_hash": "60be6678276e8a559d0ca63f2cfc7565a091ee94"
           }
         },
         {

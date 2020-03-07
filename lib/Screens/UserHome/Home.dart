@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hair_cos/Models/User.dart';
+import 'package:hair_cos/Screens/Messages/messages.dart';
 import 'package:hair_cos/Screens/ShopSignUp/ShopServices.dart';
 import 'package:hair_cos/Screens/UserHome/ShopSearch.dart';
+import 'package:hair_cos/autoAddress.dart';
 
 class Home extends StatefulWidget {
   _Home createState() => _Home();
@@ -32,10 +35,18 @@ class _Home extends State<Home> {
         ),
         itemBuilder: (context, index) {
           return cards(
-            pic: pic,
-            name: serviceType[index],
-            onData: () {},
-          );
+              pic: pic,
+              name: serviceType[index],
+              onData: () {
+                print(User.userData.userId);
+
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => index == 5
+                            ? Messages(currentUserId: User.userData.userId)
+                            : index == 3 ? AutoAddress() : ShopSearch()));
+              });
         },
         itemCount: serviceType.length,
       ),
@@ -44,11 +55,7 @@ class _Home extends State<Home> {
 
   Widget cards({String pic, String name, Function onData}) {
     return InkWell(
-      onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(builder: (context){
-          return ShopSearch(searchType: name,);
-        }));
-      },
+      onTap: onData,
       child: Card(
         elevation: 5,
         child: Container(

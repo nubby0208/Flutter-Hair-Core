@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hair_cos/Models/User.dart';
 import 'package:hair_cos/Screens/UserProfile/EditProfile.dart';
 import 'package:hair_cos/Services/Images.dart';
-import 'package:hair_cos/StateContainers/LoginStateContainer.dart';
 
 class Profile extends StatefulWidget {
   _Profile createState() => _Profile();
@@ -15,20 +15,19 @@ class _Profile extends State<Profile> {
   var container;
 
   @override
-  Widget build(BuildContext context) {
-    container = StateContainer.of(context);
-    name = container.database.user.isNameEmpty()
-        ? "No name"
-        : container.database.user.name;
+  void initState() {
+    super.initState();
+    profileImage = User.userData.userPhoto;
+    name = User.userData.name;
+  }
 
-    profileImage = container.database.user.profileUrl;
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Profile"),
       ),
-      body: container.database.user.anonymous != null
-          ? (container.database.user.anonymous ? noProfile() : content(context))
-          : content(context),
+      body: User.userData.userId != null ? content(context) : noProfile(),
     );
   }
 

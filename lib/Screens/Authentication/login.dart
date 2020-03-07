@@ -11,6 +11,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hair_cos/Models/User.dart';
 import 'package:hair_cos/Screens/ShopSignUp/ShopSignUp.dart';
 import 'package:hair_cos/Screens/UserHome/Home.dart';
+import 'package:hair_cos/Screens/UserHome/NavBar.dart';
 import 'package:hair_cos/Services/Authentication.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
@@ -173,7 +174,10 @@ class _LoginContentState extends State<LoginContent> {
                       padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
                       child: InkWell(
                         onTap: () async {
-                          load(true);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => NavBar()));
                           /* dynamic result =
                           await widget.auth.signInAnon();
                       if (result == null) {
@@ -349,7 +353,7 @@ class _LoginContentState extends State<LoginContent> {
           User.userData.userId = onValue.user.uid;
           save(false);
           Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => Home()));
+              context, MaterialPageRoute(builder: (context) => NavBar()));
         });
       } catch (signinError) {
         if (signinError.toString().contains("Given String is empty or null")) {
@@ -460,7 +464,7 @@ class _LoginContentState extends State<LoginContent> {
       load(false);
 
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => ShopSignUp()));
+          context, MaterialPageRoute(builder: (context) => NavBar()));
     } else {
       Fluttertoast.showToast(msg: "Sign in fail");
       load(false);
@@ -560,7 +564,7 @@ class _LoginContentState extends State<LoginContent> {
           load(false);
 
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => ShopSignUp()));
+              context, MaterialPageRoute(builder: (context) => NavBar()));
         } else {
           Fluttertoast.showToast(msg: "Sign in fail");
           load(false);
