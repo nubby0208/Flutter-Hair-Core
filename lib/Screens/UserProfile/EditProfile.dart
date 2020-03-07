@@ -2,15 +2,11 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hair_cos/CustomViews/EditDetails.dart';
-import 'package:hair_cos/Services/Database.dart';
+import 'package:hair_cos/Models/User.dart';
 import 'package:hair_cos/Services/Images.dart';
 import 'package:hair_cos/StateContainers/LoginStateContainer.dart';
 
 class EditProfile extends StatefulWidget {
-  final DatabaseServices database;
-
-  EditProfile({this.database});
-
   _EditProfile createState() => _EditProfile();
 }
 
@@ -24,12 +20,16 @@ class _EditProfile extends State<EditProfile> {
   @override
   void initState() {
     super.initState();
+    profileImage = User.userData.userPhoto ?? "";
+    name = User.userData.name ?? "";
+    email = User.userData.userEmail ?? "";
+    mobile = User.userData.userNumber ?? "";
+    address = User.userData.address ?? "";
   }
 
   @override
   Widget build(BuildContext context) {
     //setAttributes(container);
-    
 
     return Scaffold(
       appBar: AppBar(
@@ -48,11 +48,8 @@ class _EditProfile extends State<EditProfile> {
                 builder: (context) {
                   return EditDetails(
                     type: "Name",
-                    text: name,
-                    onPress: (name) {
-                      
-                     
-                    },
+                    // text: name ?? "",
+                    onPress: (name) {},
                   );
                 },
               ),
@@ -72,7 +69,7 @@ class _EditProfile extends State<EditProfile> {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return EditDetails(
                 type: "Email",
-                text: email,
+                // text: email ?? "",
                 inputType: TextInputType.emailAddress,
                 onPress: (name) {
                   /* User user = container.database.user;
@@ -97,10 +94,10 @@ class _EditProfile extends State<EditProfile> {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return EditDetails(
                 type: "Mobile",
-                text: mobile,
+                // text: mobile ?? "",
                 inputType: TextInputType.phone,
                 onPress: (name) {
-                 /*  User user = container.database.user;
+                  /*  User user = container.database.user;
                   user.mobile = name;
                   container.database.editProfile(user);
                   container.updateUser(user); */
@@ -125,7 +122,7 @@ class _EditProfile extends State<EditProfile> {
                 builder: (context) {
                   return EditDetails(
                     type: "Address",
-                    text: address,
+                    //text: address ?? "",
                     onPress: (name) {
                       /* User user = container.database.user;
                       user.address = name;
@@ -168,7 +165,7 @@ class _EditProfile extends State<EditProfile> {
                   StateContainer.of(context).database.uploadProfilePicture(
                     file,
                     onData: (image) {
-                     /*  User user = StateContainer.of(context).database.user;
+                      /*  User user = StateContainer.of(context).database.user;
                       User.userData.userPhoto = image;
                       StateContainer.of(context).updateUser(user); */
                       setState(() {});

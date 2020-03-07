@@ -4,6 +4,7 @@ import 'package:hair_cos/CustomViews/CommentView.dart';
 import 'package:hair_cos/CustomViews/ExpandableText.dart';
 import 'package:hair_cos/Screens/UserViewShop/ViewBookingTypes.dart';
 import 'package:hair_cos/Screens/UserViewShop/ViewAllComments.dart';
+import 'package:hair_cos/Screens/UserViewShop/map.dart';
 import 'package:hair_cos/Services/Images.dart';
 
 class ViewShop extends StatefulWidget {
@@ -134,6 +135,16 @@ class _ViewShop extends State<ViewShop> {
               Divider(
                 color: Colors.black,
               ),
+              Padding(
+                  padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
+                  child: Text(
+                    "Address",
+                    style: TextStyle(fontSize: 20),
+                  )),
+              address(context),
+              Divider(
+                color: Colors.black,
+              ),
             ]),
           )
         ],
@@ -247,6 +258,31 @@ class _ViewShop extends State<ViewShop> {
                             style: TextStyle(fontWeight: FontWeight.bold))),
                   ],
                 )))
+      ],
+    );
+  }
+
+  Widget address(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+            padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
+            child: GestureDetector(
+              onTap: () => Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => MapPage())),
+              child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(
+                    children: <Widget>[
+                      Icon(Icons.location_on),
+                      Padding(
+                          padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                          child: Text("Get Directions",
+                              style: TextStyle(fontWeight: FontWeight.bold))),
+                    ],
+                  )),
+            )),
       ],
     );
   }
