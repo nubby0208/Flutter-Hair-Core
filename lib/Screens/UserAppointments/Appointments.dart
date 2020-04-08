@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+/* import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hair_cos/CustomViews/AppointmentsTile.dart';
 
@@ -107,5 +107,156 @@ class _Appointments extends State<Appointments> {
               ));
         },
         itemCount: bookingTypes.length);
+  }
+}
+ */
+
+import 'package:flutter/material.dart';
+import 'package:hair_cos/Constants/color.dart';
+import 'package:hair_cos/CustomViews/CustomButton.dart';
+import 'package:hair_cos/Models/User.dart';
+import 'package:hair_cos/Screens/Messages/messages.dart';
+import 'package:hair_cos/Screens/payment_screen.dart/payment_plan.dart';
+
+class Appointments extends StatefulWidget {
+  @override
+  _AppointmentsPageState createState() => _AppointmentsPageState();
+}
+
+class _AppointmentsPageState extends State<Appointments> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text("Appointments"),
+        ),
+        body: Container(
+          padding: EdgeInsets.all(10),
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                child: ListView.builder(
+                    itemCount: 10,
+                    itemBuilder: (context, index) {
+                      return imageCard2(index);
+                    }),
+              )
+            ],
+          ),
+        ));
+  }
+
+  imageCard2(int index) {
+    return GestureDetector(
+      onTap: () {},
+      child: Card(
+        elevation: 10,
+        child: Container(
+            height: MediaQuery.of(context).size.width / 1.6,
+            padding: EdgeInsets.only(right: 5, bottom: 5),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                        flex: 2,
+                        child: Container(
+                          height: 100,
+                          child: Image.asset(
+                            index == 0
+                                ? 'assets/images/apt1.png'
+                                : 'assets/images/apt2.png',
+                            fit: BoxFit.cover,
+                          ),
+                        )),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                        flex: 4,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Text(
+                              'Tue, 18 Mar at 4:30 Pm ',
+                              style: TextStyle(
+                                  fontSize: 19, fontWeight: FontWeight.bold),
+                              maxLines: 1,
+                            ),
+                            Text(
+                              'Beard Trim',
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.bold),
+                              maxLines: 1,
+                            ),
+                            Text(
+                              'Russell Robins ',
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue),
+                              maxLines: 1,
+                            ),
+                            Container(
+                              height: 30,
+                              width: 100,
+                              child: CustomButton.roundedButton(context,
+                                  onPress: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Messages(
+                                              currentUserId:
+                                                  User.userData.userId))),
+                                  txt: 'Chat',
+                                  bold: false,
+                                  fontsize: 13.0,
+                                  textColor: Colors.white,
+                                  background: Colors.green),
+                            )
+                          ],
+                        ))
+                  ],
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 10, right: 10),
+                  child: Text(
+                      'Pri quas audiam virtute ut, case utamur fuisset eam ut, iisque accommodare an eam. Reque blandit qui eu, cu vix nonumy volumus. Legendos intellegam id usu, vide oporteat vix eu, id illud principes has. Nam tempor utamur gubergren no.'),
+                ),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                        child: Container(
+                      margin: EdgeInsets.only(left: 10, right: 5),
+                      height: 40,
+                      child: CustomButton.roundedButton(context,
+                          txt: 'Reschedule',
+                          background: secondaryColor,
+                          onPress: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => PaymentPlan())),
+                          fontsize: 15.0,
+                          textColor: Colors.black),
+                    )),
+                    Expanded(
+                        child: Container(
+                      margin: EdgeInsets.only(left: 10, right: 5),
+                      height: 40,
+                      child: CustomButton.roundedButton(context,
+                          txt: 'Cancel',
+                          background: Colors.red,
+                          fontsize: 15.0,
+                          textColor: Colors.black),
+                    ))
+                  ],
+                )
+              ],
+            )),
+      ),
+    );
   }
 }

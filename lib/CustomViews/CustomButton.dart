@@ -9,6 +9,8 @@ class CustomButton {
     textColor,
     onPress,
     borderColor,
+    bold,
+    fontsize,
   }) {
     Color bgColor = Theme.of(context).primaryColor;
     Color txtColor = Colors.white;
@@ -30,7 +32,10 @@ class CustomButton {
         child: Center(
           child: Text(
             txt,
-            style: TextStyle(color: textColor ?? txtColor),
+            style: TextStyle(
+                color: textColor ?? txtColor,
+                fontSize: fontsize != null ? fontsize : 20,
+                fontWeight: bold == null ? FontWeight.bold : null),
           ),
         ),
       ),

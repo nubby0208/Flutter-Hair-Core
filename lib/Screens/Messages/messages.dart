@@ -33,9 +33,6 @@ class MessagesState extends State<Messages> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-            icon: Icon(Icons.search, size: 25, color: Colors.white),
-            onPressed: null),
         title: Text(
           'Messages',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
@@ -262,9 +259,6 @@ class _UserTileState extends State<UserTile> {
         time = DateTime.fromMillisecondsSinceEpoch(
             int.parse(m.documents.last.data['timestamp']));
       });
-     /*  print('this is the message sjdbvsdkkkkkk--------- $last');
-      print('this is the timeeeeeee sjdbvsdkkkkkk--------- $time'); */
-      // return last;
     } else {
       setState(() {
         last = '';

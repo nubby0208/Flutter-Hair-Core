@@ -46,7 +46,6 @@
 
  */
 
-
 class User {
   static final User _singleton = User._internal();
   factory User() => _singleton;
@@ -58,4 +57,6 @@ class User {
   String userNumber;
   String address;
   String userPhoto;
+  bool buisness;
+  bool login;
 }

@@ -9,7 +9,7 @@ import 'package:hair_cos/Services/Storage.dart';
 import 'Authentication.dart';
 
 class DatabaseServices {
-  ShopUser shopUser = new ShopUser();
+  ShopUser shopUser =  ShopUser();
 
   final Auth auth = Auth();
   final StorageServices storage = StorageServices();

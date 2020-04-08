@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hair_cos/Constants/color.dart';
 import 'package:hair_cos/CustomViews/CustomButton.dart';
 import 'package:hair_cos/Screens/Authentication/login.dart';
 import 'package:hair_cos/Screens/Authentication/signup.dart';
@@ -15,115 +16,121 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          backgroundImage(),
-          welcomeContent(context),
-        ],
-      ),
+      body: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints viewportConstraints) {
+        return SingleChildScrollView(
+            child: ConstrainedBox(
+                constraints:
+                    BoxConstraints(minHeight: viewportConstraints.maxHeight),
+                child: Container(
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage("assets/images/welcome.png"),
+                            fit: BoxFit.cover)),
+                    padding: EdgeInsets.all(10),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(''),
+                        Align(alignment: Alignment.center, child: textArea()),
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: InkWell(
+                            onTap: () {},
+                            child: welcomeContent(context),
+                          ),
+                        ),
+                      ],
+                    ))));
+      }),
     );
   }
 
-  Widget backgroundImage() {
+  /* Widget backgroundImage() {
     return Center(
       child: Image.asset(
-        "asserts/barber_home_pic.jpg",
+        ,
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         fit: BoxFit.fill,
-        color: Colors.blue.withOpacity(0.7),
+        color: Colors.black.withOpacity(0.5),
         colorBlendMode: BlendMode.softLight,
       ),
+    );
+  } */
+
+  Widget textArea() {
+    return Column(
+      children: <Widget>[
+        Image.asset(
+          'assets/images/logo.png',
+          scale: 30,
+        ),
+        SizedBox(height: 10),
+        RichText(
+            text: TextSpan(children: [
+          TextSpan(
+              text: 'Inertia',
+              style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Gilroy')),
+          TextSpan(
+              text: ' Cosmetics',
+              style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Gilroy',
+                  color: secondaryColor))
+        ])),
+        Text(
+          'Lorem ipsum dolor sit amet, consectetur\n adipisicing elit, sed do eiusmod.',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.white, fontSize: 16),
+        )
+      ],
     );
   }
 
   Widget welcomeContent(context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 0, 0, 40),
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.fromLTRB(40, 0, 40, 20),
-            child: CustomButton.roundedButton(
-              context,
-              txt: "Login".toUpperCase(),
-              onPress: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return LoginView();
-                    },
-                  ),
-                );
-              },
-            ),
+          CustomButton.roundedButton(
+            context,
+            background: secondaryColor,
+            textColor: Colors.black,
+            txt: "Login".toUpperCase(),
+            onPress: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return LoginContent();
+                  },
+                ),
+              );
+            },
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(40, 0, 40, 20),
-            child: CustomButton.roundedButton(
-              context,
-              txt: "Signup".toUpperCase(),
-              background: Colors.white,
-              textColor: Colors.black,
-              borderColor: Theme.of(context).primaryColor,
-              onPress: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return SignUp();
-                    },
-                  ),
-                );
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(40, 0, 40, 0),
-            child: CustomButton.roundedButton(
-              context,
-              txt: "Bussiness signup".toUpperCase(),
-              background: Colors.white,
-              textColor: Colors.black,
-              borderColor: Theme.of(context).primaryColor,
-              onPress: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return SignUp(
-                        shopSignUp: true,
-                      );
-                    },
-                  ),
-                );
-              },
-            ),
+          SizedBox(height: 10),
+          CustomButton.roundedButton(
+            context,
+            txt: "Signup".toUpperCase(),
+            background: Colors.transparent,
+            borderColor: secondaryColor,
+            onPress: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return SignUpContent();
+                  },
+                ),
+              );
+            },
           ),
         ],
-      ),
-    );
-  }
-
-  Widget loginButtons({txt, background, textColor, onPress, borderColor}) {
-    return RaisedButton(
-      onPressed: () {
-        onPress();
-      },
-      color: background,
-      splashColor: Colors.grey,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(50),
-        side: BorderSide(color: borderColor ?? background, width: 3),
-      ),
-      child: Container(
-        height: 50,
-        child: Center(
-          child: Text(
-            txt,
-            style: TextStyle(color: textColor),
-          ),
-        ),
       ),
     );
   }

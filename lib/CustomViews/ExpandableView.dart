@@ -40,9 +40,9 @@ class _CustomExpandableView extends State<CustomExpandableView> {
 }
 
 class ExpandableView extends StatefulWidget {
-  Widget title = Text("Tittle");
-  Widget expanded = Text("Expanded");
-  bool isExpanded = false;
+  final Widget title;
+  final Widget expanded;
+  bool isExpanded;
 
   ExpandableView(
       {@required this.title, @required this.expanded, this.isExpanded});
@@ -67,8 +67,9 @@ class _ExpandableView extends State<ExpandableView> {
               });
             },
             child: Container(
-                decoration:
-                    BoxDecoration(border: Border.all(color: Colors.black)),
+                decoration: BoxDecoration(
+                  border: Border(bottom: BorderSide(color: Colors.grey[300])),
+                ),
                 child: Row(children: <Widget>[
                   Padding(
                       padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
@@ -88,7 +89,7 @@ class _ExpandableView extends State<ExpandableView> {
                           : Icons.keyboard_arrow_up))
                 ]))),
         Padding(
-            padding: EdgeInsets.fromLTRB(20, 5, 10, 0),
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
             child: widget.isExpanded
                 ? widget.expanded
                 : Container(

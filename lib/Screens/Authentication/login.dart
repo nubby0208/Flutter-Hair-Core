@@ -2,66 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hair_cos/Constants/color.dart';
+import 'package:hair_cos/Constants/input_form_field.dart';
+import 'package:hair_cos/Constants/styles.dart';
 import 'package:hair_cos/CustomViews/CustomButton.dart';
-import 'package:hair_cos/CustomViews/Loading.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hair_cos/Models/User.dart';
-import 'package:hair_cos/Screens/ShopSignUp/ShopSignUp.dart';
-import 'package:hair_cos/Screens/UserHome/Home.dart';
 import 'package:hair_cos/Screens/UserHome/NavBar.dart';
-import 'package:hair_cos/Services/Authentication.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-
-class LoginView extends StatelessWidget {
-  final Auth auth;
-
-  LoginView({this.auth});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        child: Stack(
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(shape: BoxShape.circle),
-                child: SvgPicture.asset(
-                  'asserts/logo.svg',
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.width,
-                  fit: BoxFit.fill,
-                ),
-              ),
-            ),
-            Container(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                padding: const EdgeInsets.all(30),
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.8,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(50),
-                    topRight: Radius.circular(50),
-                  ),
-                ),
-                child: LoginContent(),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 class LoginContent extends StatefulWidget {
   @override
@@ -74,7 +23,6 @@ class _LoginContentState extends State<LoginContent> {
   bool loading = false;
   final userEmail = TextEditingController();
   final userPassword = TextEditingController();
-  bool onSave = false;
   FirebaseUser currentUser;
 
   @override
@@ -85,118 +33,183 @@ class _LoginContentState extends State<LoginContent> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
-      body: loading
-          ? Loading()
-          : ModalProgressHUD(
-              inAsyncCall: onSave,
-              child: ListView(
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0, 0, 0, 30),
-                    child: TextFormField(
-                      controller: userEmail,
-                      decoration: InputDecoration(
-                        labelText: 'Email',
-                        hintText: 'Enter your email',
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0, 0, 0, 30),
-                    child: TextFormField(
-                      controller: userPassword,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        hintText: 'Enter your password',
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(30, 0, 30, 5),
-                    child: CustomButton.roundedButton(context,
-                        txt: "Login".toUpperCase(), onPress: () {
-                      load(true);
+        body: ModalProgressHUD(
+      inAsyncCall: loading,
+      child: Stack(
+        children: <Widget>[
+          picture(size),
+          logo(size),
+          Positioned(
+            top: size.height / 7,
+            right: size.width / 6,
+            child: RichText(
+                text: TextSpan(children: [
+              TextSpan(
+                  text: 'Inertia',
+                  style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Gilroy')),
+              TextSpan(
+                  text: ' Cosmetics',
+                  style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Gilroy',
+                      color: secondaryColor))
+            ])),
+          ),
+          loginContent(context, size),
+        ],
+      ),
+    ));
+  }
 
-                      _logIn();
-                    }),
-                  ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: GestureDetector(
-                      onTap: () {
-                        showDialog(
-                            context: context,
-                            builder: (_) => forgotPass(context));
-                      },
-                      child: Text('Forgot Password'),
-                    ),
-                  ),
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Wrap(
-                        children: <Widget>[
-                          IconButton(
-                            onPressed: () {
-                              load(true);
-                              facebookSignin(context);
-                            },
-                            icon: Icon(
-                              FontAwesomeIcons.facebookSquare,
-                              color: Colors.indigo,
-                              size: 40,
-                            ),
-                          ),
-                          IconButton(
-                            onPressed: () async {
-                              googleLogin(context);
-                            },
-                            icon: Icon(
-                              FontAwesomeIcons.google,
-                              color: Colors.red,
-                              size: 40,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Center(
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
-                      child: InkWell(
-                        onTap: () async {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => NavBar()));
-                          /* dynamic result =
-                          await widget.auth.signInAnon();
-                      if (result == null) {
-                        load(false);
-                        print('error signing in');
-                      } else {
-                        print('signed in');
-                        print(result.uid);
-                        // creates user
-                        
-                        Navigator.of(context).pop();
-                      } */
-                        },
-                        child: Text("Continue as Guest"),
-                      ),
-                    ),
-                  ),
-                ],
-              )),
+  Widget logo(size) {
+    return Positioned(
+        top: size.height / 18,
+        right: size.width / 2.2,
+        child: Image.asset(
+          'assets/images/logo.png',
+          scale: 40,
+        ));
+  }
+
+  Widget picture(size) {
+    return Container(
+      height: size.height / 2.5,
+      decoration: BoxDecoration(
+        image: DecorationImage(
+            image: AssetImage('assets/images/login.png'), fit: BoxFit.cover),
+      ),
+      child: Container(
+        color: Colors.black.withOpacity(.3),
+      ),
+    );
+  }
+
+  Widget loginContent(context, size) {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Container(
+        height: size.width / .8,
+        width: size.width,
+        padding: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(40),
+              topRight: Radius.circular(40),
+            )),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Center(
+              child: Text(
+                'Log In',
+                style: title,
+              ),
+            ),
+            FormFeild(
+              userPassword: userEmail,
+              obsecure: false,
+              label: 'Email',
+              hint: 'Enter your email',
+              inputType: TextInputType.emailAddress,
+              icon: Icons.email,
+            ),
+            FormFeild(
+              userPassword: userPassword,
+              obsecure: true,
+              label: 'Passwrod',
+              hint: 'Enter your Password',
+              icon: Icons.lock,
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 10),
+              child: GestureDetector(
+                onTap: () {
+                  showDialog(
+                      context: context, builder: (_) => forgotPass(context));
+                },
+                child: Text('Forgot Password'),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
+              child: CustomButton.roundedButton(context,
+                  background: secondaryColor,
+                  txt: "Login".toUpperCase(), onPress: () {
+                load(true);
+                _logIn();
+
+                // _logIn();
+              }),
+            ),
+            Center(
+              child: Text(
+                'OR',
+                style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.grey[500],
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            Row(
+              children: <Widget>[
+                ButtonImage(
+                  image: 'assets/images/facebook.png',
+                  onTap: () {
+                    load(true);
+                    facebookSignin(context);
+                  },
+                  color: faceColor,
+                ),
+                ButtonImage(
+                  image: 'assets/images/twitter.png',
+                  onTap: null,
+                  color: tweetColor,
+                ),
+                ButtonImage(
+                  image: 'assets/images/google.png',
+                  onTap: () async {
+                    googleLogin(context);
+                  },
+                  color: googleColor,
+                ),
+              ],
+            ),
+            Center(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                child: InkWell(
+                  onTap: () async {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => LoginContent()));
+                  },
+                  child: RichText(
+                      text: TextSpan(children: [
+                    TextSpan(
+                        text: "Don't have adn account? ",
+                        style: TextStyle(color: Colors.grey[600])),
+                    TextSpan(
+                        text: ' Sign up',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Gilroy',
+                            color: secondaryColor))
+                  ])),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -351,7 +364,7 @@ class _LoginContentState extends State<LoginContent> {
                 email: userEmail.text, password: userPassword.text)
             .then((onValue) async {
           User.userData.userId = onValue.user.uid;
-          save(false);
+          load(false);
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => NavBar()));
         });
@@ -469,41 +482,6 @@ class _LoginContentState extends State<LoginContent> {
       Fluttertoast.showToast(msg: "Sign in fail");
       load(false);
     }
-
-    /* if (result == null) {
-      
-      errorDialog("Error signing in", context);
-    } else {
-      FirebaseUser user = result.user;
-      if (result.additionalUserInfo.isNewUser) {
-        User tempUser = User(
-          uid: user.uid,
-          email: user.email,
-          name: user.displayName,
-          profileUrl: user.photoUrl,
-          mobile: user.phoneNumber,
-        );
-        container.database.editProfile(tempUser);
-        container.updateUser(tempUser);
-      } else {
-        container.database.getProfile(
-          onData: (User user) {
-            container.updateUser(user);
-          },
-        );
-      }
-      if (widget.shopSignUp != null) {
-        if (widget.shopSignUp == true) {
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) {
-            return ();
-          }));
-          return;
-        }
-      }
-
-      Navigator.of(context).pop();
-    } */
   }
 
   facebookSignin(BuildContext context) async {
@@ -569,13 +547,6 @@ class _LoginContentState extends State<LoginContent> {
           Fluttertoast.showToast(msg: "Sign in fail");
           load(false);
         }
-
-        // final token = facebookLoginResult.accessToken.token;
-        /* final graphResponse = await http.get(
-            'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=${token}');
-        final profile = json.decode(graphResponse.body);
-        print(profile["email"]); */
-        //await firebaseUser.updateEmail(profile["email"]);
         return null;
         break;
     }
@@ -605,10 +576,36 @@ class _LoginContentState extends State<LoginContent> {
       loading = state;
     });
   }
+}
 
-  void save(bool state) {
-    setState(() {
-      onSave = state;
-    });
+class ButtonImage extends StatelessWidget {
+  final String image;
+  final Color color;
+  final Function onTap;
+
+  ButtonImage(
+      {@required this.image, @required this.color, @required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      flex: 1,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          margin: EdgeInsets.only(left: 5),
+          padding: EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(30),
+            color: color,
+          ),
+          child: Image(
+            image: AssetImage(image),
+            height: 20,
+            width: 20,
+          ),
+        ),
+      ),
+    );
   }
 }

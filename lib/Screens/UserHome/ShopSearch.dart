@@ -8,7 +8,7 @@ import 'package:hair_cos/Services/Database.dart';
 import 'package:hair_cos/Services/Images.dart';
 
 class ShopSearch extends StatefulWidget {
- final String searchType;
+  final String searchType;
 
   ShopSearch({this.searchType});
 
@@ -179,6 +179,7 @@ class _ShopSearchState extends State<ShopSearch> {
 
   void search(String searchTerm) {
     DatabaseShopServices db = DatabaseShopServices();
+
     db.searchShops(
       text: searchTerm,
       onData: (QuerySnapshot snapshot) {
@@ -214,16 +215,16 @@ class _ShopSearchState extends State<ShopSearch> {
     services = [];
   }
 
-  String getShorterStringFromList(List<dynamic> data){
+  String getShorterStringFromList(List<dynamic> data) {
     String toReturn = "";
-    for (int i = 0; i < data.length; i++){
+    int len = data.length != null ? data.length : 0;
+    for (int i = 0; i < len; i++) {
       toReturn += "${data[i]}";
       if (toReturn.length > 30) {
         toReturn = toReturn.substring(0, 30);
         break;
       }
-      if (i < data.length-1)
-        toReturn += ",\n  ";
+      if (i < data.length - 1) toReturn += ",\n  ";
     }
     return toReturn;
   }

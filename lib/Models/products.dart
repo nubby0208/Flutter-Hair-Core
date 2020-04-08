@@ -17,5 +17,6 @@ class PList {
   String title = '';
   String description = '';
   String price = '';
-  PList({this.description, this.price, this.title, this.photo});
+  String quantity = '';
+  PList({this.description, this.price, this.title, this.photo, this.quantity});
 }

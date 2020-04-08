@@ -1,50 +1,40 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hair_cos/Constants/color.dart';
-
 import 'package:flutter/material.dart';
-import 'package:hair_cos/Helper/image_picker_handler.dart';
+import 'package:hair_cos/Models/User.dart';
+import 'package:intl/intl.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
+import 'dart:typed_data';
 
 class AddProduct extends StatefulWidget {
   @override
   _AddProductState createState() => _AddProductState();
 }
 
-class _AddProductState extends State<AddProduct>
-    with TickerProviderStateMixin, ImagePickerListener {
+class _AddProductState extends State<AddProduct> {
   File _image;
-  String imageurl;
-  AnimationController _controller;
-  ImagePickerHandler imagePicker;
-  String _selectedItem;
-  List categoryList = List();
+  String imageurl, _error;
+  List<Asset> images = List<Asset>();
+  List<String> imgUrls = List<String>();
+
+  bool haveImage = false, loading = false;
   final pName = TextEditingController();
   final pSalePrice = TextEditingController();
   final pStock = TextEditingController();
   final pDescription = TextEditingController();
-  bool loading = false;
 
   @override
   void initState() {
     super.initState();
-
-    _controller = new AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-
-    imagePicker = new ImagePickerHandler(this, _controller);
-    imagePicker.build(primaryColor, Colors.white, true);
   }
 
   @override
   void dispose() {
     super.dispose();
-    _controller.dispose();
     pName.dispose();
     pSalePrice.dispose();
     pStock.dispose();
@@ -87,6 +77,7 @@ class _AddProductState extends State<AddProduct>
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                    images.isNotEmpty ? buildGridView() : Container(),
                     Row(
                       children: <Widget>[
                         Expanded(
@@ -95,8 +86,7 @@ class _AddProductState extends State<AddProduct>
                               Text("Product Picture"),
                               GestureDetector(
                                 onTap: () {
-                                  imagePicker.showDialog(context);
-                                  print("aaaaaaaaaaa");
+                                  loadAssets();
                                 },
                                 child: Image(
                                   image: _image == null
@@ -106,11 +96,6 @@ class _AddProductState extends State<AddProduct>
                                   width: 100,
                                 ),
                               )
-                              /* Image.asset(
-                                      "assets/image/image_Plus.png",
-                                      height: 150,
-                                      width: 100,
-                                    ) */
                             ],
                           ),
                           flex: 4,
@@ -229,12 +214,26 @@ class _AddProductState extends State<AddProduct>
                         style: TextStyle(color: Colors.white),
                       ),
                       color: primaryColor,
-                      onPressed: () {
+                      onPressed: () async {
                         setState(() {
                           loading = true;
                         });
+                        if (images.isEmpty) {
+                          setState(() {
+                            loading = false;
+                          });
+                          Fluttertoast.showToast(msg: 'Please Select an image');
+                        } else {
+                          for (int i = 0; i < images.length; i++) {
+                            imgUrls.add(await saveImage(
+                                images[i],
+                                DateTime.now()
+                                    .millisecondsSinceEpoch
+                                    .toString()));
+                          }
 
-                        uploadFile();
+                          onSave();
+                        }
                       },
                     )),
                   ],
@@ -243,33 +242,19 @@ class _AddProductState extends State<AddProduct>
         ));
   }
 
-  Future uploadFile() async {
-    if (_image != null) {
-      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-      StorageReference reference =
-          FirebaseStorage.instance.ref().child(fileName);
-      StorageUploadTask uploadTask = reference.putFile(_image);
-      StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
-      storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl) {
-        imageurl = downloadUrl;
-        setState(() {
-          onSendMessage();
-        });
-      }, onError: (err) {
-        setState(() {
-          loading = false;
-        });
-        Fluttertoast.showToast(msg: 'This file is not an image');
-      });
-    } else {
-      setState(() {
-        loading = false;
-      });
-      Fluttertoast.showToast(msg: 'Please Select an image');
-    }
+  Future saveImage(Asset asset, String name) async {
+    ByteData byteData = await asset.getByteData();
+    List<int> imageData = byteData.buffer.asUint8List();
+    StorageReference ref = FirebaseStorage.instance
+        .ref()
+        .child('${User.userData.userId}')
+        .child('products')
+        .child("$name.jpg");
+    StorageUploadTask uploadTask = ref.putData(imageData);
+    return await (await uploadTask.onComplete).ref.getDownloadURL();
   }
 
-  Future<void> onSendMessage() async {
+  Future<void> onSave() async {
     if (pName.text.isNotEmpty ||
         pSalePrice.text.isNotEmpty ||
         pDescription.text.isNotEmpty ||
@@ -285,7 +270,7 @@ class _AddProductState extends State<AddProduct>
             'price': pSalePrice.text.trim(),
             'description': pDescription.text.trim(),
             'stock': pStock.text.trim(),
-            'photo': imageurl
+            'photo': FieldValue.arrayUnion(imgUrls)
           },
         );
       });
@@ -301,11 +286,53 @@ class _AddProductState extends State<AddProduct>
     }
   }
 
-  @override
-  userImage(File _image) {
+  Widget buildGridView() {
+    return Container(
+      height: 150,
+      child: GridView.count(
+        crossAxisCount: 3,
+        children: List.generate(images.length, (index) {
+          Asset asset = images[index];
+          return AssetThumb(
+            asset: asset,
+            width: 300,
+            height: 300,
+          );
+        }),
+      ),
+    );
+  }
+
+  Future<void> loadAssets() async {
+    List<Asset> resultList = List<Asset>();
+    String error = 'No Error Dectected';
+
+    try {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: 3,
+        enableCamera: true,
+        selectedAssets: images,
+        cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
+        materialOptions: MaterialOptions(
+          actionBarColor: "#abcdef",
+          actionBarTitle: "Pick Images",
+          allViewTitle: "All Photos",
+          useDetailsView: false,
+          selectCircleStrokeColor: "#000000",
+        ),
+      );
+    } on Exception catch (e) {
+      error = e.toString();
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
     setState(() {
-      this._image = _image;
+      images = resultList;
+      _error = error;
     });
-    return _image;
   }
 }

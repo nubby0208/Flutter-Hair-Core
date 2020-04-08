@@ -1,70 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:country_pickers/country.dart';
+import 'package:country_pickers/utils/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hair_cos/Constants/color.dart';
+import 'package:hair_cos/Constants/input_form_field.dart';
 import 'package:hair_cos/CustomViews/CustomButton.dart';
-import 'package:hair_cos/CustomViews/Loading.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:hair_cos/Models/User.dart';
 import 'package:hair_cos/Screens/Authentication/login.dart';
-import 'package:hair_cos/Screens/ShopSignUp/ShopSignUp.dart';
+import 'package:hair_cos/Screens/UserHome/NavBar.dart';
+import 'package:hair_cos/Screens/verification/verfication2.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
-class SignUp extends StatelessWidget {
-  final bool shopSignUp;
-  SignUp({this.shopSignUp});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: Colors.blue,
-        child: Stack(
-          children: <Widget>[
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(shape: BoxShape.circle),
-              child: SvgPicture.asset(
-                'asserts/logoReverse.svg',
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.width,
-                fit: BoxFit.fill,
-              ),
-            ),
-            Container(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                padding: const EdgeInsets.all(30),
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.8,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(50),
-                    topRight: Radius.circular(50),
-                  ),
-                ),
-                child: SignUpContent(
-                  shopSignUp: shopSignUp,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class SignUpContent extends StatefulWidget {
-  final bool shopSignUp;
-  SignUpContent({this.shopSignUp});
-
   _SignUpContent createState() => _SignUpContent();
 }
 
@@ -75,112 +27,136 @@ class _SignUpContent extends State<SignUpContent> {
   final userEmail = TextEditingController();
   final userPassword = TextEditingController();
   final userConfirmPass = TextEditingController();
-  bool onSave = false;
   FirebaseUser currentUser;
+  Country selectedDialogCountry =
+      CountryPickerUtils.getCountryByPhoneCode('90');
 
   @override
   Widget build(BuildContext context) {
-    return loading
-        ? Loading()
-        : ModalProgressHUD(
-            inAsyncCall: onSave,
-            child: ListView(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                  child: TextFormField(
-                    controller: userEmail,
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      hintText: 'Enter your email',
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blue),
+    return Scaffold(
+      backgroundColor: backGround,
+      appBar: AppBar(
+        title: Text('Signup'),
+        centerTitle: true,
+      ),
+      body: ModalProgressHUD(
+          inAsyncCall: loading,
+          child: SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  Text('Please Fill-up details '),
+                  FormFeild(
+                    userPassword: null,
+                    obsecure: false,
+                    label: 'Name',
+                    hint: 'Enter your name',
+                    icon: Icons.person,
+                  ),
+                  FormFeild(
+                    userPassword: null,
+                    obsecure: false,
+                    label: 'Email',
+                    inputType: TextInputType.emailAddress,
+                    hint: 'Enter your Email',
+                    icon: Icons.person,
+                  ),
+                  FormFeild(
+                    userPassword: null,
+                    obsecure: false,
+                    label: 'Phone',
+                    inputType: TextInputType.number,
+                    hint: 'Enter your phone',
+                    icon: Icons.phone,
+                  ),
+                  FormFeild(
+                    userPassword: null,
+                    obsecure: true,
+                    label: 'Password',
+                    hint: 'Enter your passwrod',
+                    icon: Icons.lock,
+                  ),
+                  FormFeild(
+                    userPassword: null,
+                    obsecure: true,
+                    label: 'Confirm Password',
+                    hint: 'Enter your password',
+                    icon: Icons.lock,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
+                    child: CustomButton.roundedButton(context,
+                        background: secondaryColor,
+                        txt: "Sign up".toUpperCase(), onPress: () {
+                      if (userPassword.text != userConfirmPass.text) {
+                        Fluttertoast.showToast(msg: "Passwrod do not match");
+                      } else {
+                        load(true);
+                        _register(context);
+                      }
+                    }),
+                  ),
+                  Center(
+                    child: Text(
+                      'OR',
+                      style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.grey[500],
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Row(
+                    children: <Widget>[
+                      ButtonImage(
+                        image: 'assets/images/facebook.png',
+                        onTap: () {},
+                        color: faceColor,
+                      ),
+                      ButtonImage(
+                        image: 'assets/images/twitter.png',
+                        onTap: null,
+                        color: tweetColor,
+                      ),
+                      ButtonImage(
+                        image: 'assets/images/google.png',
+                        onTap: () async {},
+                        color: googleColor,
+                      ),
+                    ],
+                  ),
+                  Center(
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                      child: InkWell(
+                        onTap: () async {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => LoginContent()));
+                        },
+                        child: RichText(
+                            text: TextSpan(children: [
+                          TextSpan(
+                              text: "Already have an account? ",
+                              style: TextStyle(color: Colors.grey[600])),
+                          TextSpan(
+                              text: ' Log In',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Gilroy',
+                                  color: secondaryColor))
+                        ])),
                       ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                  child: TextFormField(
-                    controller: userPassword,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      hintText: 'Enter your password',
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blue),
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                  child: TextFormField(
-                    controller: userConfirmPass,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      labelText: 'Confirm Password',
-                      hintText: 'Confirm your password',
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blue),
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 5, 0, 10),
-                  child: Text(
-                    "By pressing sign up you agree to the terms and conditions",
-                    style: TextStyle(color: Colors.indigo),
-                  ),
-                ),
-                CustomButton.roundedButton(context,
-                    txt: "Sign up".toUpperCase(), onPress: () {
-                  if (userPassword.text != userConfirmPass.text) {
-                    Fluttertoast.showToast(
-                      msg: 'Password does not match ',
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                      timeInSecForIos: 1,
-                    );
-                  } else {
-                    load(true);
-
-                    _register();
-                  }
-                }),
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Wrap(
-                      children: <Widget>[
-                        IconButton(
-                          onPressed: () {
-                            load(true);
-                            facebookSignin(context);
-                          },
-                          icon: Icon(
-                            FontAwesomeIcons.facebookSquare,
-                            color: Colors.indigo,
-                            size: 40,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () async {
-                            googleLogin(context);
-                          },
-                          icon: Icon(
-                            FontAwesomeIcons.google,
-                            color: Colors.red,
-                            size: 40,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ));
+                ],
+              ),
+            ),
+          )),
+    );
   }
 
   void googleLogin(context) async {
@@ -228,7 +204,7 @@ class _SignUpContent extends State<SignUpContent> {
       load(false);
 
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => ShopSignUp()));
+          context, MaterialPageRoute(builder: (context) => NavBar()));
     } else {
       Fluttertoast.showToast(msg: "Sign in fail");
       load(false);
@@ -325,7 +301,7 @@ class _SignUpContent extends State<SignUpContent> {
           load(false);
 
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => ShopSignUp()));
+              context, MaterialPageRoute(builder: (context) => NavBar()));
         } else {
           Fluttertoast.showToast(msg: "Sign in fail");
           load(false);
@@ -340,12 +316,6 @@ class _SignUpContent extends State<SignUpContent> {
         return null;
         break;
     }
-  }
-
-  void save(bool state) {
-    setState(() {
-      onSave = state;
-    });
   }
 
   void errorDialog(String message, BuildContext context) {
@@ -368,7 +338,7 @@ class _SignUpContent extends State<SignUpContent> {
     );
   }
 
-  void _register() async {
+  void _register(context) async {
     if (userEmail.text.isNotEmpty) {
       try {
         FirebaseUser user = (await firebaseAuth.createUserWithEmailAndPassword(
@@ -385,11 +355,11 @@ class _SignUpContent extends State<SignUpContent> {
           });
           User.userData.userId = user.uid.toString();
           FirebaseAuth.instance.signOut();
-          save(false);
+          load(false);
           Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                  builder: (BuildContext context) => LoginView()));
+                  builder: (BuildContext context) => LoginContent()));
         }
       } catch (signupError) {
         if (signupError.toString().contains("Given String is empty or null")) {

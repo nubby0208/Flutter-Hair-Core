@@ -31,7 +31,8 @@ class Chat extends StatelessWidget {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: ListTile(
+        title: Text('$peername'),
+        /* ListTile(
           leading: Material(
             child: CachedNetworkImage(
               placeholder: (context, url) => Container(
@@ -57,7 +58,7 @@ class Chat extends StatelessWidget {
               style:
                   TextStyle(color: primaryColor, fontWeight: FontWeight.bold)),
           subtitle: Text('Active now'),
-        ),
+        ), */
         centerTitle: true,
       ),
       body: new ChatScreen(
@@ -230,12 +231,12 @@ class ChatScreenState extends State<ChatScreen> {
               ? Container(
                   child: Text(
                     document['content'],
-                    style: TextStyle(color: primaryColor),
+                    style: TextStyle(color: Colors.black),
                   ),
                   padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                   width: 200.0,
                   decoration: BoxDecoration(
-                      color: greyColor2,
+                      color: secondaryColor,
                       borderRadius: BorderRadius.circular(8.0)),
                   margin: EdgeInsets.only(
                       bottom: isLastMessageRight(index) ? 20.0 : 10.0,
@@ -345,12 +346,12 @@ class ChatScreenState extends State<ChatScreen> {
                     ? Container(
                         child: Text(
                           document['content'],
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: Colors.black),
                         ),
                         padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                         width: 200.0,
                         decoration: BoxDecoration(
-                            color: primaryColor,
+                            color: secondaryColor,
                             borderRadius: BorderRadius.circular(8.0)),
                         margin: EdgeInsets.only(left: 10.0),
                       )
@@ -630,7 +631,7 @@ class ChatScreenState extends State<ChatScreen> {
                   }
 
                   listMessage = snapshot.data.documents;
-                  
+
                   return ListView.builder(
                     padding: EdgeInsets.all(10.0),
                     itemBuilder: (context, index) =>

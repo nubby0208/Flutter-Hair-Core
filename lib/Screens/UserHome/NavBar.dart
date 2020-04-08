@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hair_cos/Constants/color.dart';
 import 'package:hair_cos/Products/products.dart';
 import 'package:hair_cos/Screens/UserAppointments/Appointments.dart';
 import 'package:hair_cos/Screens/UserHome/Home.dart';
 import 'package:hair_cos/Screens/UserProfile/Profile.dart';
+import 'package:hair_cos/Screens/search/booking_saloon.dart';
 
 class NavBar extends StatefulWidget {
   _NavBar createState() => _NavBar();
@@ -14,9 +16,14 @@ class _NavBar extends State<NavBar> {
 
   Widget callPage(int index) {
     switch (index) {
-      case 3:
+      case 4:
         {
           return Profile();
+        }
+        break;
+      case 3:
+        {
+          return BookSalon();
         }
         break;
       case 2:
@@ -44,9 +51,9 @@ class _NavBar extends State<NavBar> {
         body: callPage(selectedIndex),
         backgroundColor: Colors.white,
         bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Colors.blue,
-          selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.black,
+          backgroundColor: Colors.grey[300],
+          selectedItemColor: secondaryColor,
+          unselectedItemColor: Colors.grey[400],
           currentIndex: selectedIndex,
           type: BottomNavigationBarType.fixed,
           onTap: (int index) {
@@ -54,15 +61,41 @@ class _NavBar extends State<NavBar> {
               selectedIndex = index;
             });
           },
-          items: const <BottomNavigationBarItem>[
+          items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
                 icon: Icon(Icons.home), title: Text("Home")),
             BottomNavigationBarItem(
-                icon: Icon(Icons.archive), title: Text("Products")),
+                icon: Image(
+                  image: AssetImage(
+                    'assets/images/products.png',
+                  ),
+                  height: 20,
+                  width: 20,
+                  color: selectedIndex == 1 ? secondaryColor : null,
+                ),
+                title: Text("Products")),
             BottomNavigationBarItem(
-                icon: Icon(Icons.book), title: Text("Appointments")),
+                icon: Image(
+                  image: AssetImage(
+                    'assets/images/calander.png',
+                  ),
+                  height: 20,
+                  width: 20,
+                  color: selectedIndex == 2 ? secondaryColor : null,
+                ),
+                title: Text("Appointments")),
             BottomNavigationBarItem(
-                icon: Icon(Icons.person), title: Text("Profile"))
+                icon: Icon(Icons.search), title: Text("Search")),
+            BottomNavigationBarItem(
+                icon: Image(
+                  image: AssetImage(
+                    'assets/images/profile.png',
+                  ),
+                  height: 20,
+                  width: 20,
+                  color: selectedIndex == 4 ? secondaryColor : null,
+                ),
+                title: Text("Profile"))
           ],
         ),
       ),

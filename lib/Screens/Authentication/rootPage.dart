@@ -2,9 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hair_cos/Models/User.dart';
-import 'package:hair_cos/Screens/Authentication/Welcome.dart';
-import 'package:hair_cos/Screens/UserHome/Home.dart';
 import 'package:hair_cos/Screens/UserHome/NavBar.dart';
+import 'package:hair_cos/Screens/intro_screens/screen1.dart';
 
 class RootPage extends StatefulWidget {
   @override
@@ -66,7 +65,7 @@ class _RootPageState extends State<RootPage> {
     } else if (login == 2) {
       return NavBar();
     } else {
-      return WelcomeScreen();
+      return Intor1();
     }
   }
 
