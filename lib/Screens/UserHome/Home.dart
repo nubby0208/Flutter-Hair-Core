@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hair_cos/Constants/color.dart';
 import 'package:hair_cos/CustomViews/app_bar.dart';
-import 'package:hair_cos/Screens/drawer.dart';
+import 'package:hair_cos/Screens/Drawer/drawer.dart';
 import 'package:hair_cos/autoAddress.dart';
 
 class Home extends StatefulWidget {
@@ -26,18 +26,24 @@ class _Home extends State<Home> {
     return Scaffold(
         key: _scaffoldKey,
         floatingActionButton: FloatingActionButton(
-            backgroundColor: secondaryColor,
-            child: Icon(
-              Icons.location_on,
-              size: 35,
+          backgroundColor: secondaryColor,
+          child: Icon(
+            Icons.location_on,
+            size: 35,
+          ),
+          onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AutoAddress(),
             ),
-            onPressed: () => Navigator.push(context,
-                MaterialPageRoute(builder: (context) => AutoAddress()))),
+          ),
+        ),
         appBar: PreferredSize(
-            child: CustomAppBar(
-              onTap: () => _scaffoldKey.currentState.openDrawer(),
-            ),
-            preferredSize: Size.fromHeight(60)),
+          child: CustomAppBar(
+            onTap: () => _scaffoldKey.currentState.openDrawer(),
+          ),
+          preferredSize: Size.fromHeight(60),
+        ),
         drawer: DrawerFull(context, size),
         body: Container(
           padding: EdgeInsets.all(10),

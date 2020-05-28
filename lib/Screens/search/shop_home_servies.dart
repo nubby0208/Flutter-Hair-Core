@@ -5,6 +5,8 @@ import 'package:hair_cos/CustomViews/drop_down.dart';
 import 'package:hair_cos/Products/payment_screen.dart';
 
 class BarberShop extends StatefulWidget {
+  final Map type;
+  BarberShop({this.type});
   @override
   _BarberShopState createState() => _BarberShopState();
 }

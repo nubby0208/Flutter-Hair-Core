@@ -7,15 +7,18 @@ class FormFeild extends StatelessWidget {
   final IconData icon;
   final TextInputType inputType;
   final bool obsecure;
-  const FormFeild(
-      {@required this.userPassword,
-      this.hint,
-      this.icon,
-      this.label,
-      @required this.obsecure,
-      this.inputType});
+  final Function onChanged;
+  final TextEditingController controller;
 
-  final TextEditingController userPassword;
+  const FormFeild({
+    this.hint,
+    this.icon,
+    this.label,
+    @required this.obsecure,
+    this.inputType,
+    this.onChanged,
+    @required this.controller,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,17 +29,17 @@ class FormFeild extends StatelessWidget {
         borderRadius: BorderRadius.circular(30),
       ),
       child: Container(
-        padding: icon == null ? EdgeInsets.only(left: 20) : null,
         child: TextFormField(
-          controller: userPassword,
+          controller: controller,
           keyboardType: inputType != null ? inputType : null,
           obscureText: obsecure,
           decoration: InputDecoration(
-              labelText: label != null ? label : null,
-              hintText: hint,
-              prefixIcon:
-                  icon != null ? Icon(icon, color: secondaryColor) : null,
-              border: InputBorder.none),
+            labelText: label,
+            hintText: hint,
+            prefixIcon: Icon(icon, color: secondaryColor),
+            border: InputBorder.none,
+          ),
+          onChanged: (val) => onChanged(val) ?? {},
         ),
       ),
     );

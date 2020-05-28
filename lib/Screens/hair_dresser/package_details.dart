@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hair_cos/Constants/color.dart';
 import 'package:hair_cos/CustomViews/CustomButton.dart';
 import 'package:hair_cos/CustomViews/app_bar.dart';
-import 'package:hair_cos/Screens/drawer.dart';
+import 'package:hair_cos/Screens/Drawer/drawer.dart';
 import 'package:hair_cos/Screens/hair_dresser/accept_screen.dart';
 
 class HairdresserPackage extends StatefulWidget {

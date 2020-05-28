@@ -12,8 +12,8 @@ import 'package:hair_cos/Constants/input_form_field.dart';
 import 'package:hair_cos/CustomViews/CustomButton.dart';
 import 'package:hair_cos/Models/User.dart';
 import 'package:hair_cos/Screens/Authentication/login.dart';
-import 'package:hair_cos/Screens/UserHome/NavBar.dart';
-import 'package:hair_cos/Screens/verification/verfication2.dart';
+import 'package:hair_cos/Services/Database.dart';
+import 'package:hair_cos/main.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 class SignUpContent extends StatefulWidget {
@@ -27,6 +27,8 @@ class _SignUpContent extends State<SignUpContent> {
   final userEmail = TextEditingController();
   final userPassword = TextEditingController();
   final userConfirmPass = TextEditingController();
+  final userName = TextEditingController();
+  final userPhone = TextEditingController();
   FirebaseUser currentUser;
   Country selectedDialogCountry =
       CountryPickerUtils.getCountryByPhoneCode('90');
@@ -50,14 +52,14 @@ class _SignUpContent extends State<SignUpContent> {
                 children: <Widget>[
                   Text('Please Fill-up details '),
                   FormFeild(
-                    userPassword: null,
+                    controller: userName,
                     obsecure: false,
                     label: 'Name',
                     hint: 'Enter your name',
                     icon: Icons.person,
                   ),
                   FormFeild(
-                    userPassword: null,
+                    controller: userEmail,
                     obsecure: false,
                     label: 'Email',
                     inputType: TextInputType.emailAddress,
@@ -65,7 +67,7 @@ class _SignUpContent extends State<SignUpContent> {
                     icon: Icons.person,
                   ),
                   FormFeild(
-                    userPassword: null,
+                    controller: userPhone,
                     obsecure: false,
                     label: 'Phone',
                     inputType: TextInputType.number,
@@ -73,14 +75,14 @@ class _SignUpContent extends State<SignUpContent> {
                     icon: Icons.phone,
                   ),
                   FormFeild(
-                    userPassword: null,
+                    controller: userPassword,
                     obsecure: true,
                     label: 'Password',
                     hint: 'Enter your passwrod',
                     icon: Icons.lock,
                   ),
                   FormFeild(
-                    userPassword: null,
+                    controller: userConfirmPass,
                     obsecure: true,
                     label: 'Confirm Password',
                     hint: 'Enter your password',
@@ -88,16 +90,18 @@ class _SignUpContent extends State<SignUpContent> {
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
-                    child: CustomButton.roundedButton(context,
-                        background: secondaryColor,
-                        txt: "Sign up".toUpperCase(), onPress: () {
-                      if (userPassword.text != userConfirmPass.text) {
-                        Fluttertoast.showToast(msg: "Passwrod do not match");
-                      } else {
-                        load(true);
-                        _register(context);
-                      }
-                    }),
+                    child: CustomButton.roundedButton(
+                      context,
+                      background: secondaryColor,
+                      txt: "Sign up".toUpperCase(),
+                      onPress: () {
+                        if (userPassword.text != userConfirmPass.text) {
+                          Fluttertoast.showToast(msg: "Passwrod do not match");
+                        } else {
+                          _register(context);
+                        }
+                      },
+                    ),
                   ),
                   Center(
                     child: Text(
@@ -182,16 +186,12 @@ class _SignUpContent extends State<SignUpContent> {
       final List<DocumentSnapshot> documents = result.documents;
       if (documents.length == 0) {
         // Update data to server if new user
-        Firestore.instance
-            .collection('Users')
-            .document(firebaseUser.uid)
-            .setData({
-          'id': firebaseUser.uid,
-          'profile_photo': firebaseUser.photoUrl,
-          'Email': firebaseUser.email,
-          'Name': firebaseUser.displayName,
-          'Mobile': firebaseUser.phoneNumber,
-        });
+        await DatabaseServices(firebaseUser.uid).addUserSignupData(
+          firebaseUser.photoUrl,
+          firebaseUser.email,
+          firebaseUser.displayName,
+          firebaseUser.phoneNumber,
+        );
 
         // Write data to local
         currentUser = firebaseUser;
@@ -204,7 +204,7 @@ class _SignUpContent extends State<SignUpContent> {
       load(false);
 
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => NavBar()));
+          context, MaterialPageRoute(builder: (context) => MainApp()));
     } else {
       Fluttertoast.showToast(msg: "Sign in fail");
       load(false);
@@ -279,16 +279,12 @@ class _SignUpContent extends State<SignUpContent> {
           final List<DocumentSnapshot> documents = result.documents;
           if (documents.length == 0) {
             // Update data to server if new user
-            Firestore.instance
-                .collection('Users')
-                .document(firebaseUser.uid)
-                .setData({
-              'id': firebaseUser.uid,
-              'profile_photo': firebaseUser.photoUrl,
-              'Email': firebaseUser.email,
-              'Name': firebaseUser.displayName,
-              'Mobile': firebaseUser.phoneNumber,
-            });
+            await DatabaseServices(firebaseUser.uid).addUserSignupData(
+              firebaseUser.photoUrl,
+              firebaseUser.email,
+              firebaseUser.displayName,
+              firebaseUser.phoneNumber,
+            );
 
             // Write data to local
             currentUser = firebaseUser;
@@ -301,7 +297,7 @@ class _SignUpContent extends State<SignUpContent> {
           load(false);
 
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => NavBar()));
+              context, MaterialPageRoute(builder: (context) => MainApp()));
         } else {
           Fluttertoast.showToast(msg: "Sign in fail");
           load(false);
@@ -339,20 +335,39 @@ class _SignUpContent extends State<SignUpContent> {
   }
 
   void _register(context) async {
+    if (userName.text.trim() == null || userName.text.trim() == ""){
+      Fluttertoast.showToast(
+        msg: 'Please enter name',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIos: 1,
+      );
+      return;
+    }
+
+    if (userPhone.text.trim() == null || userPhone.text.trim() == ""){
+      Fluttertoast.showToast(
+        msg: 'Please enter mobile',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIos: 1,
+      );
+      return;
+    }
+    load(true);
     if (userEmail.text.isNotEmpty) {
       try {
         FirebaseUser user = (await firebaseAuth.createUserWithEmailAndPassword(
-                email: userEmail.text, password: userPassword.text))
+                email: userEmail.text.trim(), password: userPassword.text))
             .user;
         print('${user.uid}');
         if (user != null) {
-          Firestore.instance
-              .collection('Users')
-              .document(user.uid.toString())
-              .setData({
-            'Email': userEmail.text.trim(),
-            'profile_photo': "",
-          });
+          await DatabaseServices(user.uid).addUserSignupData(
+            null,
+            userEmail.text.trim(),
+            userName.text,
+            userPhone.text.trim(),
+          );
           User.userData.userId = user.uid.toString();
           FirebaseAuth.instance.signOut();
           load(false);
@@ -419,3 +434,29 @@ class _SignUpContent extends State<SignUpContent> {
     });
   }
 }
+
+/*
+try {
+              Firestore.instance
+                  .collection('Users')
+                  .document(firebaseUser.uid)
+                  .updateData({
+                'id': firebaseUser.uid,
+                'profile_photo': firebaseUser.photoUrl,
+                'Email': firebaseUser.email,
+                'Name': firebaseUser.displayName,
+                'Mobile': firebaseUser.phoneNumber,
+              });
+            } catch (e) {
+              Firestore.instance
+                  .collection('Users')
+                  .document(firebaseUser.uid)
+                  .setData({
+                'id': firebaseUser.uid,
+                'profile_photo': firebaseUser.photoUrl,
+                'Email': firebaseUser.email,
+                'Name': firebaseUser.displayName,
+                'Mobile': firebaseUser.phoneNumber,
+              });
+            }
+ */

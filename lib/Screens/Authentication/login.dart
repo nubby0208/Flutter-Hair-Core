@@ -10,6 +10,8 @@ import 'package:hair_cos/Constants/styles.dart';
 import 'package:hair_cos/CustomViews/CustomButton.dart';
 import 'package:hair_cos/Models/User.dart';
 import 'package:hair_cos/Screens/UserHome/NavBar.dart';
+import 'package:hair_cos/Services/Database.dart';
+import 'package:hair_cos/main.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 class LoginContent extends StatefulWidget {
@@ -114,7 +116,7 @@ class _LoginContentState extends State<LoginContent> {
               ),
             ),
             FormFeild(
-              userPassword: userEmail,
+              controller: userEmail,
               obsecure: false,
               label: 'Email',
               hint: 'Enter your email',
@@ -122,7 +124,7 @@ class _LoginContentState extends State<LoginContent> {
               icon: Icons.email,
             ),
             FormFeild(
-              userPassword: userPassword,
+              controller: userPassword,
               obsecure: true,
               label: 'Passwrod',
               hint: 'Enter your Password',
@@ -364,9 +366,15 @@ class _LoginContentState extends State<LoginContent> {
                 email: userEmail.text, password: userPassword.text)
             .then((onValue) async {
           User.userData.userId = onValue.user.uid;
+          User.userData
+              .fromSnapshot(await DatabaseServices(onValue.user.uid).getUser());
           load(false);
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => NavBar()));
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MainApp(),
+              ),
+              (Route<dynamic> route) => false);
         });
       } catch (signinError) {
         if (signinError.toString().contains("Given String is empty or null")) {
@@ -477,7 +485,7 @@ class _LoginContentState extends State<LoginContent> {
       load(false);
 
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => NavBar()));
+          context, MaterialPageRoute(builder: (context) => MainApp()));
     } else {
       Fluttertoast.showToast(msg: "Sign in fail");
       load(false);
@@ -542,7 +550,7 @@ class _LoginContentState extends State<LoginContent> {
           load(false);
 
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => NavBar()));
+              context, MaterialPageRoute(builder: (context) => MainApp()));
         } else {
           Fluttertoast.showToast(msg: "Sign in fail");
           load(false);

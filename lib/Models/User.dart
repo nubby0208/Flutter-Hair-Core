@@ -1,50 +1,4 @@
-/* class User {
-  String uid;
-  String profileUrl;
-  String name;
-  String email;
-  String mobile;
-  String address;
-  bool anonymous = false;
-  String sid;
-
-  User({
-    this.profileUrl,
-    this.uid,
-    this.name,
-    this.email,
-    this.mobile,
-    this.address,
-    this.anonymous,
-    this.sid,
-  });
-
-  bool isUidEmpty() {
-    return uid == null;
-  }
-
-  bool isNameEmpty() {
-    return name == null;
-  }
-
-  bool isEmailEmpty() {
-    return email == null;
-  }
-
-  bool isMobileEmpty() {
-    return mobile == null;
-  }
-
-  bool isAddressEmpty() {
-    return address == null;
-  }
-
-  bool isProfileUrlEmpty() {
-    return profileUrl == null;
-  }
-}
-
- */
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class User {
   static final User _singleton = User._internal();
@@ -52,11 +6,49 @@ class User {
   User._internal();
   static User get userData => _singleton;
   String name;
-  String userId;
   String userEmail;
   String userNumber;
-  String address;
+  String countryCode;
+  String userId;
+  String street;
+  String postcode;
+  String city;
+  String region;
   String userPhoto;
-  bool buisness;
+  String address;
   bool login;
+  String stripeId;
+
+  void fromSnapshot(DocumentSnapshot snapshot) {
+    reset();
+    name = snapshot.data['Name'];
+    userEmail = snapshot.data['Email'];
+    if (snapshot.data['Contact'] != null) {
+      userNumber = snapshot.data['Contact']['Contact'];
+      countryCode = snapshot.data['Contact']['PhoneCode'];
+    }
+    userId = snapshot.documentID;
+    if (snapshot.data['Address'] != null) {
+      street = snapshot.data['Address']['Street'];
+      postcode = snapshot.data['Address']['Postcode'];
+      city = snapshot.data['Address']['City'];
+      region = snapshot.data['Address']['Region'];
+    }
+    userPhoto = snapshot.data['ProfilePhoto'];
+    stripeId = snapshot.data['stripeId'];
+  }
+
+  void reset(){
+    name = "";
+    userEmail = "";
+    userNumber = "";
+    countryCode = "";
+    userId = "";
+    street = "";
+    postcode = "";
+    city = "";
+    region = "";
+    userPhoto = "";
+    stripeId = "";
+  }
 }

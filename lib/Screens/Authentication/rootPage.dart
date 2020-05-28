@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:hair_cos/Models/User.dart';
 import 'package:hair_cos/Screens/UserHome/NavBar.dart';
 import 'package:hair_cos/Screens/intro_screens/screen1.dart';
+import 'package:hair_cos/Services/Database.dart';
+import 'package:hair_cos/main.dart';
 
 class RootPage extends StatefulWidget {
   @override
@@ -13,23 +15,21 @@ class RootPage extends StatefulWidget {
 class _RootPageState extends State<RootPage> {
   int login = 0;
   String id = "";
+
   getCurrentUser() async {
     try {
-      id = await FirebaseAuth.instance.currentUser().then((onValue) {
+      id = await FirebaseAuth.instance.currentUser().then((onValue) async {
         if (onValue.uid == null) {
           setState(() {
             login = 1;
-            print('${onValue.uid} no online');
           });
         } else if (onValue.uid != null) {
           id = onValue.uid;
-          print('$onValue  online');
+          User.userData.userId = onValue.uid;
+          User.userData.fromSnapshot(await DatabaseServices(onValue.uid).getUser());
           setState(() {
             login = 2;
-            User.userData.userId = onValue.uid;
           });
-          User.userData.userId = onValue.uid;
-          _getUser();
         }
         return onValue.uid;
       });
@@ -38,7 +38,6 @@ class _RootPageState extends State<RootPage> {
       setState(() {
         login = 1;
       });
-      print("pppaaaaaa");
     }
   }
 
@@ -56,14 +55,15 @@ class _RootPageState extends State<RootPage> {
   Widget build(BuildContext context) {
     if (login == 0) {
       return Scaffold(
-          backgroundColor: Colors.white,
-          body: Center(
-            child: CircularProgressIndicator(
-              backgroundColor: Colors.blue,
-            ),
-          ));
+        backgroundColor: Colors.white,
+        body: Center(
+          child: CircularProgressIndicator(
+            backgroundColor: Colors.blue,
+          ),
+        ),
+      );
     } else if (login == 2) {
-      return NavBar();
+      return MainApp();
     } else {
       return Intor1();
     }

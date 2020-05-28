@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hair_cos/Constants/color.dart';
+import 'package:hair_cos/Screens/search/booking_saloon.dart';
 import 'package:hair_cos/Screens/search/saloon_catagories.dart';
 import 'package:hair_cos/Screens/search/shop_home_servies.dart';
 
@@ -25,9 +26,11 @@ class _SelectServiceState extends State<SelectService> {
               height: size.height / 1.5,
               width: size.width / 2.15,
               decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: AssetImage('assets/images/goShop.png'),
-                      fit: BoxFit.cover)),
+                image: DecorationImage(
+                  image: AssetImage('assets/images/goShop.png'),
+                  fit: BoxFit.cover,
+                ),
+              ),
               child: Container(
                 height: double.infinity,
                 width: double.infinity,
@@ -104,9 +107,11 @@ class _SelectServiceState extends State<SelectService> {
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => BarberShop()));
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => BookSalon(),
+                          ),
+                        );
                       },
                       child: CircleAvatar(
                         radius: 30,

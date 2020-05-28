@@ -1,314 +1,203 @@
 import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:hair_cos/Models/ShopSignupData.dart';
-import 'package:hair_cos/Models/ShopUser.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:hair_cos/Models/User.dart';
-import 'package:hair_cos/Services/Storage.dart';
 
-import 'Authentication.dart';
+abstract class BaseDatabaseServices {
+  Future addUserProfilePicture(File file);
 
-class DatabaseServices {
-  ShopUser shopUser =  ShopUser();
+  Future addUserName(String name);
 
-  final Auth auth = Auth();
-  final StorageServices storage = StorageServices();
+  Future addUserMobile(String countryCode, String mobile);
 
-  final CollectionReference usersCollection =
-      Firestore.instance.collection("Users");
-  final CollectionReference shopCollection =
-      Firestore.instance.collection("Shops");
-  final CollectionReference newShopCollection =
-      Firestore.instance.collection("NewShops");
+  Future addUserAddress(
+      {postcode, street, city, region, GeoFirePoint geoPoint});
 
-  /* Future editProfile(User user) async {
-    try {
-      return await usersCollection.document(User.userData.userId).updateData(
-        {
-          'Name': user.name,
-          'Email': ,
-          'Mobile': user.mobile,
-          'Address': user.address,
-          'ProfileUrl': user.profileUrl,
-        },
-      );
-    } catch (e) {
-      try {
-        return await usersCollection.document(this.user.uid).setData(
-          {
-            'Name': user.name,
-            'Email': user.email,
-            'Mobile': user.mobile,
-            'Address': user.address,
-            'ProfileUrl': user.profileUrl,
-          },
-        );
-      } catch (ex) {
-        print(ex);
-      }
-    }
-  } */
+  Future<DocumentSnapshot> getUser();
 
-  Future getProfile({Function onData}) async {
-    return await usersCollection
-        .document(User.userData.userId)
-        .get()
-        .then((DocumentSnapshot snapshot) {
-      onData(_toUser(snapshot));
-    });
-  }
+  Stream<List<Map>> get independentServices;
 
-  _toUser(DocumentSnapshot snap) {
-    User.userData.userId = snap.documentID;
-    User.userData.name = getString(snap, "Name");
-    User.userData.userEmail = getString(snap, "Email");
-    User.userData.userNumber = getString(snap, "Mobile");
-    User.userData.userPhoto = getString(snap, "ProfileUrl");
-  }
-
-  String getString(DocumentSnapshot snap, String map) {
-    try {
-      return snap.data[map];
-    } catch (e) {
-      return null;
-    }
-  }
-
-  void uploadProfilePicture(File file, {Function onData}) {
-    try {
-      _uploadProfile(file, onData: onData);
-    } catch (e) {
-      try {
-        _uploadProfile(file, onData: onData);
-      } catch (ex) {
-        print(ex);
-      }
-    }
-  }
-
-  Future upLoadProfileName(String url) async {
-    try {
-      return await usersCollection.document(User.userData.userId).updateData({
-        'ProfileUrl': url,
-      });
-    } catch (e) {
-      try {
-        return await usersCollection.document(User.userData.userId).setData({
-          'ProfileUrl': url,
-        });
-      } catch (ex) {
-        return null;
-      }
-    }
-  }
-
-  void uploadShopProfile(File file,
-      {@required Function onData, @required String sid}) {
-    // upload picture for shop
-    storage.upLoadFile(
-      image: file,
-      onData: (String profileUrl) {
-        onData(profileUrl);
-        _upLoadShopProfileName(profileUrl, sid);
-      },
-    );
-  }
-
-  Future _upLoadShopProfileName(String url, String sid) async {
-    try {
-      return await shopCollection.document(sid).updateData({
-        'ProfileUrl': url,
-      });
-    } catch (e) {
-      try {
-        return await shopCollection.document(sid).setData({
-          'ProfileUrl': url,
-        });
-      } catch (ex) {
-        return null;
-      }
-    }
-  }
-
-  void _uploadProfile(File file, {Function onData}) {
-    storage.upLoadFile(
-      image: file,
-      onData: (String profileUrl) {
-        storage.deleteFile(User.userData.userPhoto);
-        onData(profileUrl);
-        upLoadProfileName(profileUrl);
-      },
-    );
-  }
-
-  Future upLoadShopName({String sid, String name}) async {
-    try {
-      return await shopCollection.document(sid).updateData({
-        'ShopName': name,
-      });
-    } catch (e) {
-      try {
-        return await shopCollection.document(sid).setData({
-          'ShopName': name,
-        });
-      } catch (ex) {
-        return null;
-      }
-    }
-  }
-
-  Future upLoadShopAddress({String sid, String address}) async {
-    try {
-      return await shopCollection.document(sid).updateData({
-        'Address': address,
-      });
-    } catch (e) {
-      try {
-        return await shopCollection.document(sid).setData({
-          'Address': address,
-        });
-      } catch (ex) {
-        return null;
-      }
-    }
-  }
-
-  Future upLoadShopAbout({String sid, String text}) async {
-    try {
-      return await shopCollection.document(sid).updateData({
-        'About': text,
-      });
-    } catch (e) {
-      try {
-        return await shopCollection.document(sid).setData({
-          'About': text,
-        });
-      } catch (ex) {
-        return null;
-      }
-    }
-  }
-
-  Future upLoadShopEmail({String sid, String email}) async {
-    try {
-      return await shopCollection.document(sid).updateData({
-        'Email': email,
-      });
-    } catch (e) {
-      try {
-        return await shopCollection.document(sid).setData({
-          'Email': email,
-        });
-      } catch (ex) {
-        return null;
-      }
-    }
-  }
-
-  Future upLoadShopContact({String sid, String contact}) async {
-    try {
-      return await shopCollection.document(sid).updateData({
-        'Contact': contact,
-      });
-    } catch (e) {
-      try {
-        return await shopCollection.document(sid).setData({
-          'Contact': contact,
-        });
-      } catch (ex) {
-        return null;
-      }
-    }
-  }
-
-  void upLoadShopImage(
-      {String sid, File image, Function onData, prevUrl}) async {
-    try {
-      storage.upLoadFile(
-        image: image,
-        onData: (String profileUrl) {
-          storage.deleteFile(prevUrl);
-          onData(profileUrl);
-          _upLoadShopProfileName(profileUrl, sid);
-        },
-      );
-    } catch (e) {
-      try {
-        storage.upLoadFile(
-          image: image,
-          onData: (String profileUrl) {
-            storage.deleteFile(prevUrl);
-            onData(profileUrl);
-            _upLoadShopProfileName(profileUrl, sid);
-          },
-        );
-      } catch (ex) {
-        print(ex);
-      }
-    }
-  }
-
-  Future getShopProfile(String sid, {Function onData}) {
-    return shopCollection.document(sid).get().then((DocumentSnapshot snapShot) {
-      onData(_toShopUser(snapShot));
-    });
-  }
-
-  ShopUser _toShopUser(DocumentSnapshot snapshot) {
-    try {
-      return ShopUser(
-        sid: snapshot.documentID,
-        name: snapshot.data["ShopName"] ?? "No Shop Name",
-        address: snapshot.data["Address"] ?? "No Shop Address",
-        email: snapshot.data["Email"] ?? "No Shop Email",
-        contact: snapshot.data["Contact"] ?? "No Shop Contact",
-      );
-    } catch (e) {
-      return null;
-    }
-  }
-
-  Stream<DocumentSnapshot> get shopProfile {
-    return shopCollection.document(shopUser.sid).snapshots();
-  }
-
-  Stream<User> get userProfile {
-    return usersCollection.document(User.userData.userId).snapshots().map(_toUser);
-  }
-
-  Future signUpShop(ShopSignUpData signUpData) async {
-    QuerySnapshot data = await newShopCollection
-        .where("CreatorID", isEqualTo: signUpData.creatorID)
-        .getDocuments();
-    if (data.documents.isEmpty) {
-      return null;
-    }
-    return newShopCollection.add(signUpData.toJson());
-  }
+  Future addUserSignupData(
+      String profilephoto, String email, String name, String mobile);
 }
 
-class DatabaseShopServices extends DatabaseServices {
-  //DatabaseShopServices(User user) : super(user);
+class DatabaseServices implements BaseDatabaseServices {
+  String uid;
+  CollectionReference _userCollection = Firestore.instance.collection('Users');
+  DocumentReference _independentServicesCollection = Firestore.instance
+      .collection('Services')
+      .document("mobile_8npEQWDGQJUbHqUb9xAW");
 
-  void searchShops({String text, Function onData}) async {
-    if (text == "Independant Owners") {
-      await shopCollection
-          .where("Indipendant", isEqualTo: true)
-          .getDocuments()
-          .then(
-        (QuerySnapshot snap) {
-          onData(snap);
+  StorageReference _userProfileRef;
+
+  DatabaseServices(this.uid) {
+    _userProfileRef =
+        FirebaseStorage.instance.ref().child('Images/Users/${this.uid}/');
+  }
+
+  @override
+  Future addUserProfilePicture(File file) async {
+    try {
+      if (User.userData.userPhoto != null)
+        FirebaseStorage.instance
+            .getReferenceFromUrl(User.userData.userPhoto)
+            .then(
+          (StorageReference ref) {
+            if (ref != null) ref.delete();
+          },
+        );
+    } on Exception catch (e) {
+      //
+    }
+    StorageReference storageReference = _userProfileRef
+        .child('${DateTime.now().millisecondsSinceEpoch.toString()}.jpg');
+
+    StorageUploadTask uploadTask = storageReference.putFile(file);
+    await uploadTask.onComplete;
+    String url = await storageReference.getDownloadURL();
+
+    try {
+      return await _userCollection.document(this.uid).updateData(
+        {
+          'ProfilePhoto': url,
         },
       );
-    } else {
-      await shopCollection
-          .where("Type", arrayContains: text)
-          .getDocuments()
-          .then(
-        (QuerySnapshot snap) {
-          onData(snap);
+    } catch (e) {
+      return await _userCollection.document(this.uid).setData(
+        {
+          'ProfilePhoto': url,
         },
       );
+    }
+  }
+
+  @override
+  Future addUserName(String name) async {
+    try {
+      return await _userCollection.document(this.uid).updateData(
+        {
+          'Name': name,
+        },
+      );
+    } catch (e) {
+      return await _userCollection.document(this.uid).setData(
+        {
+          'Name': name,
+        },
+      );
+    }
+  }
+
+  @override
+  Future addUserMobile(String countryCode, String mobile) async {
+    try {
+      return await _userCollection.document(this.uid).updateData(
+        {
+          'Contact': {
+            'Contact': mobile,
+            'PhoneCode': countryCode,
+          },
+        },
+      );
+    } catch (e) {
+      return await _userCollection.document(this.uid).setData(
+        {
+          'Contact': {
+            'Contact': mobile,
+            'PhoneCode': countryCode,
+          },
+        },
+      );
+    }
+  }
+
+  @override
+  Future addUserAddress(
+      {postcode, street, city, region, GeoFirePoint geoPoint}) async {
+    try {
+      return await _userCollection.document(this.uid).updateData(
+        {
+          'Address': {
+            'Street': street,
+            'Postcode': postcode,
+            'City': city,
+            'Region': region,
+          },
+          'Position': geoPoint.data,
+        },
+      );
+    } catch (e) {
+      return await _userCollection.document(this.uid).setData(
+        {
+          'Address': {
+            'Street': street,
+            'Postcode': postcode,
+            'City': city,
+            'Region': region,
+          },
+          'Position': geoPoint.data,
+        },
+      );
+    }
+  }
+
+  @override
+  Future<DocumentSnapshot> getUser() async {
+    return await _userCollection.document(this.uid).get();
+  }
+
+  @override
+  Stream<List<Map>> get independentServices {
+    return _independentServicesCollection.snapshots().map(_toList);
+  }
+
+  List<Map> _toList(DocumentSnapshot documentSnapshot) {
+    try {
+      if (documentSnapshot == null ||
+          documentSnapshot.data == null ||
+          documentSnapshot.data['Services'] == null) return [];
+      List<Map> res = [];
+      documentSnapshot.data['Services'].forEach((val) {
+        Map m = {};
+        val.forEach((k, v) {
+          m[k] = v;
+        });
+        res.add(m);
+      });
+      return res;
+    } catch (e) {
+      print(e);
+      return [];
+    }
+  }
+
+  @override
+  Future addUserSignupData(
+      String profilephoto, String email, String name, String mobile) async {
+    try {
+      return await _userCollection.document(this.uid).updateData({
+        'id': this.uid,
+        'ProfilePhoto': profilephoto,
+        'Email': email,
+        'Name': name,
+        'Contact': {
+          'Contact': mobile,
+          'PhoneCode': '44',
+        },
+      });
+    } catch (e) {
+      return await _userCollection.document(this.uid).setData({
+        'id': this.uid,
+        'ProfilePhoto': profilephoto,
+        'Email': email,
+        'Name': name,
+        'Contact': {
+          'Contact': mobile,
+          'PhoneCode': '44',
+        },
+      });
     }
   }
 }
