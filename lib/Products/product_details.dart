@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hair_cos/Constants/color.dart';
 import 'package:hair_cos/Models/products.dart';
 import 'package:hair_cos/Products/payment_screen.dart';
@@ -12,32 +14,11 @@ class ProductDeatils extends StatefulWidget {
 class _ProductDeatilsState extends State<ProductDeatils> {
   List<int> stock = [1, 2, 3, 4, 5];
   int max, _selected = 1;
-  /*
-  Token _paymentToken;
-  String _error;
   PList list = PList();
-  PaymentMethod _paymentMethod;
-  var day = DateTime.now();
-  var newDay;
-  var formatter;
-  String formatedDay, formatedMonth; */
+
   @override
   void initState() {
     super.initState();
-    /*  max = int.parse(Product.productData.instock);
-    for (int i = 0; i < max; i++) {
-      stock.add(i + 1);
-    }
-    StripePayment.setOptions(StripeOptions(
-      publishableKey: "pk_test_S3bXzfFKiMIEGGFL8Q1LoikR002CKBRgyK",
-    ));
-    setState(() {
-      newDay = day.add(Duration(days: 3));
-    });
-    formatter = new DateFormat('EEEE');
-    formatedDay = formatter.format(newDay);
-    formatter = new DateFormat('MMMM');
-    formatedMonth = formatter.format(newDay); */
   }
 
   @override
@@ -53,33 +34,33 @@ class _ProductDeatilsState extends State<ProductDeatils> {
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-              /* SizedBox(
-                  height: MediaQuery.of(context).size.width / 2,
-                  width: double.infinity,
-                  child: Carousel(
-                    images: Product.productData.pictures.map((i) {
-                      return Builder(
-                        builder: (BuildContext context) {
-                          return Padding(
-                              padding: EdgeInsets.all(10),
-                              child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(40),
-                                  ),
-                                  child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(36),
-                                      child: Image.network(
-                                        i,
-                                        fit: BoxFit.cover,
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                      ))));
-                        },
-                      );
-                    }).toList(),
-                  )), */
-              Container(
-                child: Image.asset('assets/images/scissor.png'),
+              SizedBox(
+                height: MediaQuery.of(context).size.width,
+                width: double.infinity,
+                child: Carousel(
+                  images: Product.productData.pictures.map((i) {
+                    return Builder(
+                      builder: (BuildContext context) {
+                        return Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(40),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(36),
+                              child: Image.network(
+                                i,
+                                fit: BoxFit.cover,
+                                width: MediaQuery.of(context).size.width,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }).toList(),
+                ),
               ),
               SizedBox(height: 10),
               Container(
@@ -95,7 +76,7 @@ class _ProductDeatilsState extends State<ProductDeatils> {
                         style: TextStyle(color: Colors.black, fontSize: 18),
                       ),
                       TextSpan(
-                        text: ' \$ 966',
+                        text: ' \£${Product.productData.price}',
                         style: TextStyle(
                             color: Colors.black38,
                             fontSize: 20,
@@ -120,15 +101,20 @@ class _ProductDeatilsState extends State<ProductDeatils> {
                     ])),
                     SizedBox(height: 10),
                     Text(
-                      'Etiam viverra sed lectus sed fringilla. Suspendisse ante justo, tempor eget sodales sed, rutrum vitae justo. Nulla luctus, sem in tincidunt vehicula, lectus purus dapibus sem, a efficitur tellus erat non risus. Nam porttitor in libero in dapibus. Suspendisse sed ex ut diam sodales accumsan vitae nec leo. Ut interdum commodo felis non convallis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In varius sem enim, ut blandit arcu lobortis sit amet. Aenean hendrerit pharetra nulla, a volutpat nibh bibendum ac. Sed et egestas nisl.',
+                      '${Product.productData.description}',
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 10),
-                    Text(
-                      'In stock.',
-                      style: TextStyle(color: Colors.green, fontSize: 18),
-                    ),
+                    Product.productData.instock == '0'
+                        ? Text(
+                            'Not stock.',
+                            style: TextStyle(color: Colors.red, fontSize: 18),
+                          )
+                        : Text(
+                            'In stock.',
+                            style: TextStyle(color: Colors.green, fontSize: 18),
+                          ),
                     Container(
                       margin: EdgeInsets.only(top: 10),
                       padding: EdgeInsets.only(left: 5, right: 5),
@@ -168,32 +154,6 @@ class _ProductDeatilsState extends State<ProductDeatils> {
                         ],
                       ),
                     ),
-                    /*  Container(
-                      margin: EdgeInsets.only(top: 10),
-                      height: 40,
-                      width: double.infinity,
-                      child: RaisedButton(
-                        color: Colors.blueAccent,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        onPressed: () {
-                          /*  list.description = Product.productData.description;
-                          list.title = Product.productData.title;
-                          list.photo = Product.productData.pictures[0];
-                          list.price = Product.productData.price;
-                          list.quantity = _selected.toString();
-                          Product.productData.cart.add(list); */
-                          print(Product.productData.cart.length);
-                          Fluttertoast.showToast(msg: 'Product added to cart');
-                          /* showModalBottomSheet(
-                              context: context,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20)),
-                              builder: (_) => showCart(context)); */
-                        },
-                        child: Text('Add to Basket'),
-                      ),
-                    ), */
                     Container(
                       margin: EdgeInsets.only(top: 10),
                       height: 40,
@@ -215,10 +175,30 @@ class _ProductDeatilsState extends State<ProductDeatils> {
                       height: 10,
                     ),
                     Center(
-                      child: Text(
-                        'Add to cart',
-                        style: TextStyle(
-                            fontSize: 16, decoration: TextDecoration.underline),
+                      child: GestureDetector(
+                        onTap: () {
+                          list.description = Product.productData.description;
+                          list.title = Product.productData.title;
+                          list.photo = Product.productData.pictures[0];
+                          list.price = Product.productData.price;
+                          list.quantity = _selected.toString();
+                          Product.productData.cart.add(list);
+                          print(Product.productData.cart.length);
+                          Fluttertoast.showToast(msg: 'Product added to cart');
+                          showModalBottomSheet(
+                            context: context,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)),
+                            builder: (_) => showCart(context),
+                          );
+                        },
+                        child: Text(
+                          'Add to cart',
+                          style: TextStyle(
+                            fontSize: 16,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
                       ),
                     )
                   ],

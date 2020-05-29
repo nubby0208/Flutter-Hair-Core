@@ -1,3 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hair_cos/Constants/color.dart';
 import 'package:hair_cos/Models/products.dart';
@@ -49,42 +51,42 @@ class _ProductsState extends State<Products> {
         //  leading: IconButton(icon: Icon(Icons.add), onPressed: ),
         title: Text('Products'),
         bottom: PreferredSize(
-            child: Container(
-              height: 30,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: 9,
-                padding: EdgeInsets.only(left: 10),
-                itemBuilder: (BuildContext context, int index) {
-                  return Padding(
-                    padding: EdgeInsets.only(left: 20),
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selected = index;
-                        });
-                      },
-                      child: Text(
-                        index == 0
-                            ? 'All'
-                            : index == 1
-                                ? 'Combs'
-                                : index == 2
-                                    ? 'Scissors'
-                                    : index == 3 ? 'Hair Gel' : 'Hair Spray',
-                        style: TextStyle(
-                            fontSize: 13,
-                            fontWeight:
-                                selected == index ? FontWeight.bold : null,
-                            color: selected == index ? Colors.red : null),
-                      ),
+          child: Container(
+            height: 30,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: 9,
+              padding: EdgeInsets.only(left: 10),
+              itemBuilder: (BuildContext context, int index) {
+                return Padding(
+                  padding: EdgeInsets.only(left: 20),
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selected = index;
+                      });
+                    },
+                    child: Text(
+                      index == 0
+                          ? 'All'
+                          : index == 1
+                              ? 'Combs'
+                              : index == 2
+                                  ? 'Scissors'
+                                  : index == 3 ? 'Hair Gel' : 'Hair Spray',
+                      style: TextStyle(
+                          fontSize: 13,
+                          fontWeight:
+                              selected == index ? FontWeight.bold : null,
+                          color: selected == index ? Colors.red : null),
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
-            preferredSize: Size.fromHeight(40)),
-
+          ),
+          preferredSize: Size.fromHeight(40),
+        ),
         centerTitle: true,
         actions: <Widget>[
           Stack(
@@ -118,20 +120,7 @@ class _ProductsState extends State<Products> {
           ),
         ],
       ),
-      body: Container(
-        padding: EdgeInsets.all(10),
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: ListView.builder(
-                  itemCount: 4,
-                  itemBuilder: (context, index) => imageCard(index)),
-            ),
-          ],
-        ),
-      ),
-
-      /* StreamBuilder(
+      body: StreamBuilder(
         stream: Firestore.instance.collection('products').snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
@@ -146,154 +135,26 @@ class _ProductsState extends State<Products> {
                     imageCard(snapshot.data.documents[index], index));
           }
         },
-      ), */
-    );
-  }
-
-  /* imageCard(DocumentSnapshot data, int index) {
-    print(data['photo'][0]);
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          Product.productData.title = data['title'];
-          Product.productData.description = data['description'];
-          Product.productData.pictures = data['photo'];
-          Product.productData.price = data['price'];
-          Product.productData.instock = data['stock'];
-          Product.productData..docid = data.documentID;
-        });
-
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => ProductDeatils()));
-      },
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        elevation: 10,
-        child: Container(
-          padding: EdgeInsets.all(5),
-          height: MediaQuery.of(context).size.width / 2,
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                  flex: 2,
-                  child: data['photo'] != null || data['photo'] != ""
-                      ? Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          padding: EdgeInsets.all(5),
-                          child: CachedNetworkImage(
-                            placeholder: (context, url) => Container(
-                              child: CircularProgressIndicator(),
-                              width: 50.0,
-                              height: 50.0,
-                              padding: EdgeInsets.all(15.0),
-                            ),
-                            imageUrl: "${data['photo'][0]}",
-                            /* width: 60.0,
-                            height: 60.0, */
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                      : Container(
-                          child: Text('Image Error'),
-                        )),
-              Expanded(
-                  flex: 4,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
-                    children: <Widget>[
-                      Text(
-                        '${data['title']}',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        '${data['description']}',
-                        style: TextStyle(
-                          fontSize: 16,
-                        ),
-                        maxLines: 2,
-                      ),
-                      SizedBox(height: 10),
-                      Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.star,
-                            color: Colors.yellow,
-                          ),
-                          Icon(
-                            Icons.star,
-                            color: Colors.yellow,
-                          ),
-                          Icon(
-                            Icons.star,
-                            color: Colors.yellow,
-                          ),
-                          Icon(
-                            Icons.star,
-                            color: Colors.yellow,
-                          ),
-                          Icon(
-                            Icons.star_half,
-                            color: Colors.yellow,
-                          ),
-                          Text('265'),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      Row(
-                        children: <Widget>[
-                          Text('\$',
-                              style: TextStyle(
-                                fontSize: 18,
-                              )),
-                          Text(
-                            '${data['price']}',
-                            style: TextStyle(
-                                fontSize: 22, fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.check,
-                            color: Colors.yellow,
-                          ),
-                          Text(
-                            'Prime',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.blue),
-                          ),
-                          Text(' get it'),
-                          Text(
-                            '  $formatedDay, $formatedMonth, ${newDay.day}',
-                            style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      Text(' Eligible for FREE UK Delievery ')
-                    ],
-                  ))
-            ],
-          ),
-        ),
       ),
     );
   }
- */
 
-  imageCard(int index) {
+  imageCard(DocumentSnapshot data, int index) {
     return GestureDetector(
-      onTap: () => Navigator.push(
-          context, MaterialPageRoute(builder: (context) => ProductDeatils())),
+      onTap: () {
+        Product.productData.title = data['title'];
+        Product.productData.description = data['description'];
+        Product.productData.pictures = data['photo'];
+        Product.productData.price = data['price'];
+        Product.productData.instock = data['stock'];
+        Product.productData..docid = data.documentID;
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProductDeatils(),
+          ),
+        );
+      },
       child: Card(
         elevation: 10,
         child: Container(
@@ -305,8 +166,30 @@ class _ProductsState extends State<Products> {
                 Row(
                   children: <Widget>[
                     Expanded(
-                        flex: 2,
-                        child: Image.asset('assets/images/scissor.png')),
+                      flex: 2,
+                      child: data['photo'] != null || data['photo'] != ""
+                          ? Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              padding: EdgeInsets.all(5),
+                              child: CachedNetworkImage(
+                                placeholder: (context, url) => Container(
+                                  child: CircularProgressIndicator(),
+                                  width: 50.0,
+                                  height: 50.0,
+                                  padding: EdgeInsets.all(15.0),
+                                ),
+                                imageUrl: "${data['photo'][0]}",
+                                /* width: 60.0,
+                            height: 60.0, */
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          : Container(
+                              child: Text('No image'),
+                            ),
+                    ),
                     SizedBox(
                       width: 10,
                     ),
@@ -317,13 +200,7 @@ class _ProductsState extends State<Products> {
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             Text(
-                              'Y.S. Park YS-254 Bar',
-                              style: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.bold),
-                              maxLines: 2,
-                            ),
-                            Text(
-                              'Barbar Comb ',
+                              '${data['title']}',
                               style: TextStyle(
                                   fontSize: 15, fontWeight: FontWeight.bold),
                               maxLines: 2,
@@ -384,13 +261,13 @@ class _ProductsState extends State<Products> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
                         Text(
-                          '\$ 966',
+                          '\£${data['price']}',
                           style: TextStyle(
                             fontSize: 20,
                           ),
                         ),
                         Text(
-                          '\$1096',
+                          '\£1096',
                           style: TextStyle(
                               color: Colors.grey[500],
                               fontSize: 18,
@@ -410,8 +287,7 @@ class _ProductsState extends State<Products> {
                     child: Container(
                   padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                   child: Text(
-                    'Etiam viverra sed lectus sed fringilla. Suspendisse ante justo, tempor eget sodales sed, rutrum vitae justo. Nulla luctus, sem in tincidunt vehicula, lectus purus dapibus sem, a efficitur tellus erat non risus. Nam porttitor in libero in dapibus. Suspendisse sed ex ut diam sodales accumsan vitae nec leo. Ut interdum commodo felis non convallis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In varius sem enim, ut blandit arcu lobortis sit amet. Aenean hendrerit pharetra nulla, a volutpat nibh bibendum ac. Sed et egestas nisl.',
-                    maxLines: 2,
+                    '${data['description']}',
                     style: TextStyle(height: 1.4),
                   ),
                 ))
