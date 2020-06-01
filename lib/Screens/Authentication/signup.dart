@@ -116,7 +116,9 @@ class _SignUpContent extends State<SignUpContent> {
                     children: <Widget>[
                       ButtonImage(
                         image: 'assets/images/facebook.png',
-                        onTap: () {},
+                        onTap: () async {
+                          facebookSignin(context);
+                        },
                         color: faceColor,
                       ),
                       ButtonImage(
@@ -126,7 +128,9 @@ class _SignUpContent extends State<SignUpContent> {
                       ),
                       ButtonImage(
                         image: 'assets/images/google.png',
-                        onTap: () async {},
+                        onTap: () async {
+                          googleLogin(context);
+                        },
                         color: googleColor,
                       ),
                     ],
@@ -142,17 +146,25 @@ class _SignUpContent extends State<SignUpContent> {
                                   builder: (context) => LoginContent()));
                         },
                         child: RichText(
-                            text: TextSpan(children: [
-                          TextSpan(
-                              text: "Already have an account? ",
-                              style: TextStyle(color: Colors.grey[600])),
-                          TextSpan(
-                              text: ' Log In',
-                              style: TextStyle(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "Already have an account? ",
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                              TextSpan(
+                                text: ' Log In',
+                                style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontFamily: 'Gilroy',
-                                  color: secondaryColor))
-                        ])),
+                                  color: secondaryColor,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -164,153 +176,125 @@ class _SignUpContent extends State<SignUpContent> {
   }
 
   void googleLogin(context) async {
-    load(true);
+    try {
+      load(true);
+      GoogleSignInAccount googleUser = await googleSignIn.signIn();
+      GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
-    GoogleSignInAccount googleUser = await googleSignIn.signIn();
-    GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final AuthCredential credential = GoogleAuthProvider.getCredential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      AuthResult auth = await firebaseAuth.signInWithCredential(credential);
+      FirebaseUser firebaseUser = auth.user;
 
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
+      if (firebaseUser != null) {
+        if (auth.additionalUserInfo.isNewUser) {
+          // Update data to server if new user
+          await DatabaseServices(firebaseUser.uid).addUserSignupData(
+            firebaseUser.photoUrl,
+            firebaseUser.email,
+            firebaseUser.displayName,
+            firebaseUser.phoneNumber,
+          );
 
-    FirebaseUser firebaseUser =
-        (await firebaseAuth.signInWithCredential(credential)).user;
+          // Write data to local
+          currentUser = firebaseUser;
+          User.userData.userId = firebaseUser.uid;
+        } else {
+          // Write data to local
+          User.userData.userId = firebaseUser.uid;
+        }
+        Fluttertoast.showToast(msg: "Sign in success");
+        load(false);
 
-    if (firebaseUser != null) {
-      // Check is already sign up
-      final QuerySnapshot result = await Firestore.instance
-          .collection('Users')
-          .where('id', isEqualTo: firebaseUser.uid)
-          .getDocuments();
-      final List<DocumentSnapshot> documents = result.documents;
-      if (documents.length == 0) {
-        // Update data to server if new user
-        await DatabaseServices(firebaseUser.uid).addUserSignupData(
-          firebaseUser.photoUrl,
-          firebaseUser.email,
-          firebaseUser.displayName,
-          firebaseUser.phoneNumber,
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MainApp(),
+          ),
         );
-
-        // Write data to local
-        currentUser = firebaseUser;
-        User.userData.userId = firebaseUser.uid;
       } else {
-        // Write data to local
-        User.userData.userId = documents[0].documentID;
+        Fluttertoast.showToast(msg: "Sign in fail");
+        load(false);
       }
-      Fluttertoast.showToast(msg: "Sign in success");
-      load(false);
-
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => MainApp()));
-    } else {
-      Fluttertoast.showToast(msg: "Sign in fail");
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Sign in failed");
       load(false);
     }
-
-    /* if (result == null) {
-      
-      errorDialog("Error signing in", context);
-    } else {
-      FirebaseUser user = result.user;
-      if (result.additionalUserInfo.isNewUser) {
-        User tempUser = User(
-          uid: user.uid,
-          email: user.email,
-          name: user.displayName,
-          profileUrl: user.photoUrl,
-          mobile: user.phoneNumber,
-        );
-        container.database.editProfile(tempUser);
-        container.updateUser(tempUser);
-      } else {
-        container.database.getProfile(
-          onData: (User user) {
-            container.updateUser(user);
-          },
-        );
-      }
-      if (widget.shopSignUp != null) {
-        if (widget.shopSignUp == true) {
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) {
-            return ();
-          }));
-          return;
-        }
-      }
-
-      Navigator.of(context).pop();
-    } */
   }
 
-  facebookSignin(BuildContext context) async {
-    FirebaseUser firebaseUser;
-    final facebookLogin = new FacebookLogin();
-    facebookLogin.loginBehavior = FacebookLoginBehavior.webViewOnly;
+  void facebookSignin(BuildContext context) async {
+    try {
+      FirebaseUser firebaseUser;
+      final facebookLogin = new FacebookLogin();
+      facebookLogin.loginBehavior = FacebookLoginBehavior.webViewOnly;
 
-    final facebookLoginResult = await facebookLogin
-        .logInWithReadPermissions(['email', 'public_profile']);
+      final facebookLoginResult = await facebookLogin
+          .logInWithReadPermissions(['email', 'public_profile']);
 
-    switch (facebookLoginResult.status) {
-      case FacebookLoginStatus.error:
-        print("Error");
-        break;
+      switch (facebookLoginResult.status) {
+        case FacebookLoginStatus.error:
+          print("Error");
+          break;
 
-      case FacebookLoginStatus.cancelledByUser:
-        print("CancelledByUser");
-        break;
+        case FacebookLoginStatus.cancelledByUser:
+          print("CancelledByUser");
+          break;
 
-      case FacebookLoginStatus.loggedIn:
-        print("LoggedIn");
-        AuthCredential credential = FacebookAuthProvider.getCredential(
-            accessToken: facebookLoginResult.accessToken.token);
-        firebaseUser =
-            (await firebaseAuth.signInWithCredential(credential)).user;
-        print(firebaseUser);
-        if (firebaseUser != null) {
-          // Check is already sign up
-          final QuerySnapshot result = await Firestore.instance
-              .collection('Users')
-              .where('id', isEqualTo: firebaseUser.uid)
-              .getDocuments();
-          final List<DocumentSnapshot> documents = result.documents;
-          if (documents.length == 0) {
-            // Update data to server if new user
-            await DatabaseServices(firebaseUser.uid).addUserSignupData(
-              firebaseUser.photoUrl,
-              firebaseUser.email,
-              firebaseUser.displayName,
-              firebaseUser.phoneNumber,
-            );
+        case FacebookLoginStatus.loggedIn:
+          print("LoggedIn");
+          AuthCredential credential = FacebookAuthProvider.getCredential(
+              accessToken: facebookLoginResult.accessToken.token);
+          AuthResult auth = await firebaseAuth.signInWithCredential(credential);
+          firebaseUser = auth.user;
+          print(firebaseUser);
+          if (firebaseUser != null) {
+            // Check is already sign up
+//          final QuerySnapshot result = await Firestore.instance
+//              .collection('Users')
+//              .where('id', isEqualTo: firebaseUser.uid)
+//              .getDocuments();
+//          final List<DocumentSnapshot> documents = result.documents;
 
-            // Write data to local
-            currentUser = firebaseUser;
-            User.userData.userId = firebaseUser.uid;
+            if (auth.additionalUserInfo.isNewUser) {
+              // Update data to server if new user
+              await DatabaseServices(firebaseUser.uid).addUserSignupData(
+                firebaseUser.photoUrl,
+                firebaseUser.email,
+                firebaseUser.displayName,
+                firebaseUser.phoneNumber,
+              );
+
+              // Write data to local
+              currentUser = firebaseUser;
+              User.userData.userId = firebaseUser.uid;
+            } else {
+              // Write data to local
+              User.userData.userId = firebaseUser.uid;
+            }
+            Fluttertoast.showToast(msg: "Sign in success");
+            load(false);
+
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => MainApp()));
           } else {
-            // Write data to local
-            User.userData.userId = documents[0].documentID;
+            Fluttertoast.showToast(msg: "Sign in fail");
+            load(false);
           }
-          Fluttertoast.showToast(msg: "Sign in success");
-          load(false);
 
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => MainApp()));
-        } else {
-          Fluttertoast.showToast(msg: "Sign in fail");
-          load(false);
-        }
-
-        // final token = facebookLoginResult.accessToken.token;
-        /* final graphResponse = await http.get(
+          // final token = facebookLoginResult.accessToken.token;
+          /* final graphResponse = await http.get(
             'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=${token}');
         final profile = json.decode(graphResponse.body);
         print(profile["email"]); */
-        //await firebaseUser.updateEmail(profile["email"]);
-        return null;
-        break;
+          //await firebaseUser.updateEmail(profile["email"]);
+          return null;
+          break;
+      }
+    } catch (e){
+      Fluttertoast.showToast(msg: "Sign in failed");
+      load(false);
     }
   }
 
@@ -335,7 +319,7 @@ class _SignUpContent extends State<SignUpContent> {
   }
 
   void _register(context) async {
-    if (userName.text.trim() == null || userName.text.trim() == ""){
+    if (userName.text.trim() == null || userName.text.trim() == "") {
       Fluttertoast.showToast(
         msg: 'Please enter name',
         toastLength: Toast.LENGTH_SHORT,
@@ -345,7 +329,7 @@ class _SignUpContent extends State<SignUpContent> {
       return;
     }
 
-    if (userPhone.text.trim() == null || userPhone.text.trim() == ""){
+    if (userPhone.text.trim() == null || userPhone.text.trim() == "") {
       Fluttertoast.showToast(
         msg: 'Please enter mobile',
         toastLength: Toast.LENGTH_SHORT,
@@ -375,6 +359,14 @@ class _SignUpContent extends State<SignUpContent> {
               context,
               MaterialPageRoute(
                   builder: (BuildContext context) => LoginContent()));
+        } else {
+          Fluttertoast.showToast(
+            msg: 'Incorrect email/ password',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIos: 1,
+          );
+          load(false);
         }
       } catch (signupError) {
         if (signupError.toString().contains("Given String is empty or null")) {
@@ -434,29 +426,3 @@ class _SignUpContent extends State<SignUpContent> {
     });
   }
 }
-
-/*
-try {
-              Firestore.instance
-                  .collection('Users')
-                  .document(firebaseUser.uid)
-                  .updateData({
-                'id': firebaseUser.uid,
-                'profile_photo': firebaseUser.photoUrl,
-                'Email': firebaseUser.email,
-                'Name': firebaseUser.displayName,
-                'Mobile': firebaseUser.phoneNumber,
-              });
-            } catch (e) {
-              Firestore.instance
-                  .collection('Users')
-                  .document(firebaseUser.uid)
-                  .setData({
-                'id': firebaseUser.uid,
-                'profile_photo': firebaseUser.photoUrl,
-                'Email': firebaseUser.email,
-                'Name': firebaseUser.displayName,
-                'Mobile': firebaseUser.phoneNumber,
-              });
-            }
- */

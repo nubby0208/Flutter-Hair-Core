@@ -48,7 +48,7 @@ class MessagesState extends State<Messages> {
               child: StreamBuilder(
                 stream: Firestore.instance.collection('Users').snapshots(),
                 builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
+                  if (!snapshot.hasData || snapshot.connectionState == ConnectionState.waiting) {
                     return Center(
                       child: CircularProgressIndicator(
                         valueColor: AlwaysStoppedAnimation<Color>(themeColor),

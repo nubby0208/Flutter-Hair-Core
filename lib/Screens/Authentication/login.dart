@@ -441,122 +441,125 @@ class _LoginContentState extends State<LoginContent> {
   }
 
   void googleLogin(context) async {
-    load(true);
+    try {
+      load(true);
+      GoogleSignInAccount googleUser = await googleSignIn.signIn();
+      GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
-    GoogleSignInAccount googleUser = await googleSignIn.signIn();
-    GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final AuthCredential credential = GoogleAuthProvider.getCredential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      AuthResult auth = await firebaseAuth.signInWithCredential(credential);
+      FirebaseUser firebaseUser = auth.user;
 
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
+      if (firebaseUser != null) {
+        if (auth.additionalUserInfo.isNewUser) {
+          // Update data to server if new user
+          await DatabaseServices(firebaseUser.uid).addUserSignupData(
+            firebaseUser.photoUrl,
+            firebaseUser.email,
+            firebaseUser.displayName,
+            firebaseUser.phoneNumber,
+          );
 
-    FirebaseUser firebaseUser =
-        (await firebaseAuth.signInWithCredential(credential)).user;
+          // Write data to local
+          currentUser = firebaseUser;
+          User.userData.userId = firebaseUser.uid;
+        } else {
+          // Write data to local
+          User.userData.userId = firebaseUser.uid;
+        }
+        Fluttertoast.showToast(msg: "Sign in success");
+        load(false);
 
-    if (firebaseUser != null) {
-      // Check is already sign up
-      final QuerySnapshot result = await Firestore.instance
-          .collection('Users')
-          .where('id', isEqualTo: firebaseUser.uid)
-          .getDocuments();
-      final List<DocumentSnapshot> documents = result.documents;
-      if (documents.length == 0) {
-        // Update data to server if new user
-        Firestore.instance
-            .collection('Users')
-            .document(firebaseUser.uid)
-            .setData({
-          'id': firebaseUser.uid,
-          'profile_photo': firebaseUser.photoUrl,
-          'Email': firebaseUser.email,
-          'Name': firebaseUser.displayName,
-          'Mobile': firebaseUser.phoneNumber,
-        });
-
-        // Write data to local
-        currentUser = firebaseUser;
-        User.userData.userId = firebaseUser.uid;
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MainApp(),
+          ),
+        );
       } else {
-        // Write data to local
-        User.userData.userId = documents[0].documentID;
+        Fluttertoast.showToast(msg: "Sign in fail");
+        load(false);
       }
-      Fluttertoast.showToast(msg: "Sign in success");
-      load(false);
-
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => MainApp()));
-    } else {
-      Fluttertoast.showToast(msg: "Sign in fail");
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Sign in failed");
       load(false);
     }
   }
 
-  facebookSignin(BuildContext context) async {
-    FirebaseUser firebaseUser;
-    final facebookLogin = new FacebookLogin();
-    facebookLogin.loginBehavior = FacebookLoginBehavior.webViewOnly;
+  void facebookSignin(BuildContext context) async {
+    try {
+      FirebaseUser firebaseUser;
+      final facebookLogin = new FacebookLogin();
+      facebookLogin.loginBehavior = FacebookLoginBehavior.webViewOnly;
 
-    final facebookLoginResult = await facebookLogin
-        .logInWithReadPermissions(['email', 'public_profile']);
+      final facebookLoginResult = await facebookLogin
+          .logInWithReadPermissions(['email', 'public_profile']);
 
-    switch (facebookLoginResult.status) {
-      case FacebookLoginStatus.error:
-        load(false);
-        print("Error");
-        break;
+      switch (facebookLoginResult.status) {
+        case FacebookLoginStatus.error:
+          print("Error");
+          break;
 
-      case FacebookLoginStatus.cancelledByUser:
-        load(false);
-        print("CancelledByUser");
-        break;
+        case FacebookLoginStatus.cancelledByUser:
+          print("CancelledByUser");
+          break;
 
-      case FacebookLoginStatus.loggedIn:
-        load(false);
-        print("LoggedIn");
-        AuthCredential credential = FacebookAuthProvider.getCredential(
-            accessToken: facebookLoginResult.accessToken.token);
-        firebaseUser =
-            (await firebaseAuth.signInWithCredential(credential)).user;
-        print(firebaseUser);
-        if (firebaseUser != null) {
-          // Check is already sign up
-          final QuerySnapshot result = await Firestore.instance
-              .collection('Users')
-              .where('id', isEqualTo: firebaseUser.uid)
-              .getDocuments();
-          final List<DocumentSnapshot> documents = result.documents;
-          if (documents.length == 0) {
-            // Update data to server if new user
-            Firestore.instance
-                .collection('Users')
-                .document(firebaseUser.uid)
-                .setData({
-              'id': firebaseUser.uid,
-              'profile_photo': firebaseUser.photoUrl,
-              'Email': firebaseUser.email,
-              'Name': firebaseUser.displayName,
-              'Mobile': firebaseUser.phoneNumber,
-            });
+        case FacebookLoginStatus.loggedIn:
+          print("LoggedIn");
+          AuthCredential credential = FacebookAuthProvider.getCredential(
+              accessToken: facebookLoginResult.accessToken.token);
+          AuthResult auth = await firebaseAuth.signInWithCredential(credential);
+          firebaseUser = auth.user;
+          print(firebaseUser);
+          if (firebaseUser != null) {
+            // Check is already sign up
+//          final QuerySnapshot result = await Firestore.instance
+//              .collection('Users')
+//              .where('id', isEqualTo: firebaseUser.uid)
+//              .getDocuments();
+//          final List<DocumentSnapshot> documents = result.documents;
 
-            // Write data to local
-            currentUser = firebaseUser;
-            User.userData.userId = firebaseUser.uid;
+            if (auth.additionalUserInfo.isNewUser) {
+              // Update data to server if new user
+              await DatabaseServices(firebaseUser.uid).addUserSignupData(
+                firebaseUser.photoUrl,
+                firebaseUser.email,
+                firebaseUser.displayName,
+                firebaseUser.phoneNumber,
+              );
+
+              // Write data to local
+              currentUser = firebaseUser;
+              User.userData.userId = firebaseUser.uid;
+            } else {
+              // Write data to local
+              User.userData.userId = firebaseUser.uid;
+            }
+            Fluttertoast.showToast(msg: "Sign in success");
+            load(false);
+
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => MainApp()));
           } else {
-            // Write data to local
-            User.userData.userId = documents[0].documentID;
+            Fluttertoast.showToast(msg: "Sign in fail");
+            load(false);
           }
-          Fluttertoast.showToast(msg: "Sign in success");
-          load(false);
 
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => MainApp()));
-        } else {
-          Fluttertoast.showToast(msg: "Sign in fail");
-          load(false);
-        }
-        return null;
-        break;
+          // final token = facebookLoginResult.accessToken.token;
+          /* final graphResponse = await http.get(
+            'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=${token}');
+        final profile = json.decode(graphResponse.body);
+        print(profile["email"]); */
+          //await firebaseUser.updateEmail(profile["email"]);
+          return null;
+          break;
+      }
+    } catch (e){
+      Fluttertoast.showToast(msg: "Sign in failed");
+      load(false);
     }
   }
 
