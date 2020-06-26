@@ -1,8 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hair_cos/Constants/color.dart';
+
+import 'package:flutter_svg/flutter_svg.dart';
+
 import 'package:hair_cos/Screens/UserHome/NavBar.dart';
 import 'package:hair_cos/splash_screen.dart';
+
+
+
+
 
 void main() {
   //SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
